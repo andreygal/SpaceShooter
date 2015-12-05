@@ -1,4 +1,4 @@
-package gameObjects;
+package shooterServer;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -41,8 +41,9 @@ public abstract class GameObject {
 	 * constructs a game object by resizing the image, setting the velocities and 
 	 * calculating all the derived attributes like Dimension, Position etc.
 	 */
-	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize) {
+	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition) {
 		this.objectSize = objectSize;
+		this.objectPosition = objectPosition; 
 		//set the velocities
 		this.xSpeed = xSpeed;
 		this.ySpeed = ySpeed;

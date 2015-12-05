@@ -6,7 +6,9 @@ import javax.websocket.server.ServerEndpoint;
 
 @ServerEndpoint(value = "/shooter", decoders = {}, encoders = {})
 public class ShooterServerEndpoint {
-	
+	final static int WIDTH  = 500; 
+	final static int HEIGHT = 500; 
+
 	@OnOpen
 	public void onOpen(){
 		

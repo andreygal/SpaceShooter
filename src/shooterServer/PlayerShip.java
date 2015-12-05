@@ -1,5 +1,6 @@
-package gameObjects;
+package shooterServer;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -19,10 +20,10 @@ public final class PlayerShip extends Ship {
 	 * @param botInset is the width of the bottom border of a panel
 	 * @param bulletVelocity is the velocity of the bullet fired by the ship object
 	 */
-	public PlayersShip(int xSpeed, String path, int botInset, int bulletVelocity){
-		super(xSpeed, 0, path);
+	public PlayersShip(int xSpeed, int imageID, Dimension playerShipSize, int bulletVelocity){
+		super(xSpeed, 0, imageID, playerShipSize);
 		//the starting position of the player's ship, calculated to be the middle of the screen.
-		objectPosition = new Point(((Main.WIDTH-this.getWidth())/2), (Main.HEIGHT-this.getHeight()*2+botInset)); 	
+		objectPosition = new Point(((Main.WIDTH-this.getWidth())/2), (Main.HEIGHT-this.getHeight()*2)); 	
 		this.bulletVelocity = bulletVelocity; 
 	}
 	/**

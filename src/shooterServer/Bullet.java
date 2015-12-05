@@ -1,4 +1,4 @@
-package gameObjects;
+package shooterServer;
 
 import java.awt.Point;
 /**

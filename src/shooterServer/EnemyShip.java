@@ -1,4 +1,4 @@
-package gameObjects;
+package shooterServer;
 
 import java.awt.Point;
 /**
@@ -9,7 +9,7 @@ import java.awt.Point;
  */
 public final class EnemyShip extends Ship {
 
-	public EnemyShip(int xSpeed, String path, Point position){
+	public EnemyShip(int xSpeed,  Point position){
 		super(xSpeed, 0, path);
 		objectPosition = new Point(position);
 	}
