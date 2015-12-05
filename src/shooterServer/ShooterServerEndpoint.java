@@ -21,4 +21,12 @@ public class ShooterServerEndpoint {
 	public void onClose(){
 		
 	}
+	
+	private void startGame(){
+		
+	}
+	
+	private void tick(){
+		
+	}
 }

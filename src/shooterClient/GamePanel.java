@@ -43,13 +43,13 @@ public class GamePanel extends JPanel implements KeyListener{
     		//if a player's ship was not destroyed, draw it on the screen.
     		if(isRunning){
     			g.drawImage(player.resizedSprite, player.objectPosition.x, player.objectPosition.y, null);
-    			
+
     			for(int i=0; i<5; i++){
     				for(int j=0; j<7; j++){
-            			g.drawImage(enemies[i][j].getImage(), enemies[i][j].objectPosition.x, enemies[i][j].objectPosition.y, null);
+    					g.drawImage(enemies[i][j].getImage(), enemies[i][j].objectPosition.x, enemies[i][j].objectPosition.y, null);
     				}
     			}
-    			
+
     			for(Bullet i: bullets){
     				g.drawImage(i.resizedSprite, i.objectPosition.x, i.objectPosition.y, null);
     			}
