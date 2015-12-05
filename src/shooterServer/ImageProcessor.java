@@ -1,5 +1,6 @@
 package shooterServer;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.io.File;
@@ -15,7 +16,7 @@ public class ImageProcessor {
 		public static Image[] resizedBullets; 
 
 		
-		ImageProcessor(){
+	ImageProcessor(){
 		players = new File("././resource/Players");
 		enemies = new File("././resource/Enemies");
 		bullets = new File("././resource/Bullets");
@@ -31,7 +32,6 @@ public class ImageProcessor {
 //		for (int i = 0; i < resizedPlayers.length; i++) {
 //			System.out.println(resizedPlayers[i]);
 //		}
-	}
 
 	public static Image[] getResizedImages(File imageDir) {
 		// resize images and store them in respective arrays
@@ -61,6 +61,39 @@ public class ImageProcessor {
 		return images;
 	}
 	
-	public static Rectangle[] getRectanges(Image[] resizedImages){
+	public static Dimension getImageDimensions(Image resizedImage){
 		
+		Dimension dimension = new Dimension(resizedImage.getWidth(null), re); 
+		
+		return dimension; 
+	}
+	
 }
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
