@@ -1,5 +1,7 @@
 package gameObjects;
 
+import java.awt.Dimension;
+
 /**
  * This class abstracts the behaviors common to ships. 
  * 
@@ -9,8 +11,8 @@ package gameObjects;
  */
 public abstract class Ship extends GameObject {
 	//uses the superclass' constructor 
-	public Ship(int xSpeed, int ySpeed){
-		super(xSpeed, ySpeed);
+	public Ship(int xSpeed, int ySpeed, int imageID, Dimension shipSize){
+		super(xSpeed, ySpeed, imageID, shipSize);
 	}
 	/**
 	 * Moves the ship to the right. 
