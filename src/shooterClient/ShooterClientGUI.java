@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager; 
 
@@ -19,10 +20,11 @@ public class ShooterClientGUI {
 
 	public static void main(String[] args) {
 		
+		
 	}
 	
 	
-	private static void createAndShowGUI(){
+	private static void createAndShowGUI(Session session){
 		//basic GUI setup
         JFrame frame = new JFrame("Alien Invaders");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -41,6 +43,4 @@ public class ShooterClientGUI {
         gamePanel.go();
     }
 		
-	}
-
 }
