@@ -63,7 +63,7 @@ public class ImageProcessor {
 	
 	public static Dimension getImageDimensions(Image resizedImage){
 		
-		Dimension dimension = new Dimension(resizedImage.getWidth(null), re); 
+		Dimension dimension = new Dimension(resizedImage.getWidth(null), resizedImage.getHeight(null)); 
 		
 		return dimension; 
 	}
