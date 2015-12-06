@@ -83,4 +83,7 @@ public class GamePanel extends JPanel implements KeyListener{
     	//method not used. implementation forced by the interface. 
     	@Override
     	public void keyTyped(KeyEvent e){}
+    	
+    	
+    	
 }

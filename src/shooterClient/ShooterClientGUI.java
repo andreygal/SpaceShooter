@@ -1,24 +1,37 @@
 package shooterClient;
 
 import java.awt.BorderLayout;
-import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.websocket.ClientEndpoint;
+import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
-import org.glassfish.tyrus.client.ClientManager; 
+import messages.ObjectToDrawDecoder;
+import messages.ObjectToDrawEncoder; 
 
-@ClientEndpoint()
+@ClientEndpoint(decoders = { ObjectToDrawDecoder.class }, encoders = { ObjectToDrawEncoder.class })
 public class ShooterClientGUI {
+	
 	final static int HEIGHT = 500; 
 	final static int WIDTH  = 500; 
-
 	private static GamePanel gamePanel; 
 
+	@OnOpen
+	public void onOpen(Session session) { 
+		try {
+			session.getBasicRemote().sendText("connected");
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	@OnMessage
+	public void onMessage(Session session, Message message) {
+		gamePanel.receiveObjectToDraw; 
+	}
+	
 	public static void main(String[] args) {
 		
 		
