@@ -5,6 +5,9 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.websocket.ClientEndpoint;
+import javax.websocket.CloseReason;
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
@@ -35,14 +38,19 @@ public class ShooterClientGUI {
 		
 	}
 	
-	
-	public static void main(String[] args) {
-		
+	@OnClose
+	public void onClose(Session session, CloseReason closeReason) {
 		
 	}
 	
 	
-	private static void createAndShowGUI(Session session){
+	public static void main(String[] args) {
+		createAndShowGUI(); 
+		
+	}
+	
+	
+	private static void createAndShowGUI(){
 		//basic GUI setup
         JFrame frame = new JFrame("Alien Invaders");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,9 +64,7 @@ public class ShooterClientGUI {
         frame.setSize(WIDTH, HEIGHT);
         frame.setVisible(true);
         
-        // the game starts when the gamepanel animation begins
         
-        gamePanel.go();
     }
 		
 }

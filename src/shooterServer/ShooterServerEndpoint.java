@@ -14,6 +14,7 @@ public class ShooterServerEndpoint {
 	final static int HEIGHT = 500; 
 	/**This set keeps track of currently connected sessions*/
 	private static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
+	
 	@OnOpen
 	public void onOpen(){
 		
