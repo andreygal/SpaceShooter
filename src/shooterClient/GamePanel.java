@@ -11,24 +11,29 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Random;
+import java.util.Stack;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import messages.ObjectToDraw;
+import shooterServer.ImageProcessor;
+
 public class GamePanel extends JPanel implements KeyListener{
-        /** Stores the insets for the frame. Used when calculating the starting position of the player's ship.*/
+        /** Stores the insets for the frame. Used for correcting the coordinates of the player's ship.*/
         private Insets gpInsets; 
         /**stores the end game message*/
         private String message = ""; 
         /**checks if one of the end game conditions has been met*/
         private boolean isRunning; 
-        
+        /**buffer for objects to be rendered*/
+        Stack<ObjectToDraw> buffer = new Stack<ObjectToDraw>();
         
         //GamePanel constructor. SetFocusable has to be set to true for the panel to respond to player's input.
         public GamePanel () {
                 isRunning = true; 
-                setBackground(Color.BLACK);
                 gpInsets = getInsets(); 
+                setBackground(Color.BLACK);
                 setFocusable(true);
         }
       
@@ -37,28 +42,49 @@ public class GamePanel extends JPanel implements KeyListener{
     	 * @param g Graphics component object received from the JVM.  
     	 * Method renders one "frame" of the animation
     	 */
-    	@Override
-    	public void paintComponent(Graphics g) {
-    		super.paintComponent(g);
-    		//if a player's ship was not destroyed, draw it on the screen.
-    		if(isRunning){
-    			g.drawImage(player.resizedSprite, player.objectPosition.x, player.objectPosition.y, null);
+        @Override
+        public void paintComponent(Graphics g) {
+        	super.paintComponent(g);
+        	//if there are player's ships in space, render the game.
+        	ObjectToDraw object;
 
-    			for(int i=0; i<5; i++){
-    				for(int j=0; j<7; j++){
-    					g.drawImage(enemies[i][j].getImage(), enemies[i][j].objectPosition.x, enemies[i][j].objectPosition.y, null);
-    				}
-    			}
+        	String type; 
+        	int imageID;
+        	Point position; 
 
-    			for(Bullet i: bullets){
-    				g.drawImage(i.resizedSprite, i.objectPosition.x, i.objectPosition.y, null);
-    			}
-    		} else {
-    			g.setColor(Color.BLUE);
-    			g.setFont(new Font(null, Font.BOLD, 72));
-    			g.drawString(message, 55, 200);
-    		}
-    	}
+        	if(isRunning){
+        		while(!buffer.isEmpty()){
+
+        			object   = buffer.pop();	
+        			type     = object.getType(); 
+        			imageID  = object.getImageID(); 
+        			position = object.getObjectPosition(); 
+
+        			switch(type) {
+
+        			case "PlayerShip":
+        				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
+        				break;
+
+        			case "EnemyShip": 
+        				g.drawImage(ImageProcessor.EnemyShip[imageID], position.x, position.y, null);
+        				break;
+
+        			case "Bullet":
+        				g.drawImage(ImageProcessor.Bullet[imageID], position.x, position.y, null);
+        				break; 
+
+        			default:
+        				System.out.println("Invalid image type");
+        			}
+        		} 
+        	} else {
+        			g.setColor(Color.BLUE);
+        			g.setFont(new Font(null, Font.BOLD, 72));
+        			g.drawString(message, 55, 200);
+        	}
+        }
+        
 
     	/**
     	 * CHANGED
@@ -83,6 +109,28 @@ public class GamePanel extends JPanel implements KeyListener{
     	//method not used. implementation forced by the interface. 
     	@Override
     	public void keyTyped(KeyEvent e){}
+    	
+    	
+    	public void receiveObjectToDraw(ObjectToDraw object){
+    		if(object.getType()=="terminator")
+    			repaint(); 
+    		else
+    			buffer.push(object); 
+    	}
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
     	
     	
     	

@@ -8,6 +8,7 @@ import javax.websocket.ClientEndpoint;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
+import messages.ObjectToDraw;
 import messages.ObjectToDrawDecoder;
 import messages.ObjectToDrawEncoder; 
 
@@ -28,9 +29,12 @@ public class ShooterClientGUI {
 	}
 	
 	@OnMessage
-	public void onMessage(Session session, Message message) {
-		gamePanel.receiveObjectToDraw; 
+	public void onMessage(Session session, ObjectToDraw object) {
+	
+		gamePanel.receiveObjectToDraw(object);
+		
 	}
+	
 	
 	public static void main(String[] args) {
 		

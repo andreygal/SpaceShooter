@@ -11,9 +11,9 @@ import javax.imageio.ImageIO;
 public class ImageProcessor {
 	
 		private File players, enemies, bullets; 
-		public static Image[] resizedPlayers; 
-		public static Image[] resizedEnemies; 
-		public static Image[] resizedBullets; 
+		public static Image[] PlayerShip; 
+		public static Image[] EnemyShip; 
+		public static Image[] Bullet; 
 
 		
 	ImageProcessor(){
@@ -22,15 +22,15 @@ public class ImageProcessor {
 		bullets = new File("././resource/Bullets");
 
 		// declare arrays to hold resized sprites
-		resizedPlayers = getResizedImages(players);
-		resizedEnemies = getResizedImages(enemies);
-		resizedBullets = getResizedImages(bullets);
+		PlayerShip = getResizedImages(players);
+		EnemyShip  = getResizedImages(enemies);
+		Bullet     = getResizedImages(bullets);
 		}
 		
 
 		//for testing
-//		for (int i = 0; i < resizedPlayers.length; i++) {
-//			System.out.println(resizedPlayers[i]);
+//		for (int i = 0; i < PlayerShip.length; i++) {
+//			System.out.println(PlayerShip[i]);
 //		}
 
 	public static Image[] getResizedImages(File imageDir) {
