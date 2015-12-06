@@ -14,4 +14,7 @@ public class ObjectToDrawEncoder implements Encoder.Text<ObjectToDraw>{
 	
 	@Override
 	public void init(EndpointConfig ec) { }
+	
+	@Override 
+	public void destroy() { }
 }
