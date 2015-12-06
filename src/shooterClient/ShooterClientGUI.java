@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.websocket.ClientEndpoint;
 import javax.websocket.Session;
 
 import org.glassfish.tyrus.client.ClientManager; 
@@ -15,7 +16,7 @@ import org.glassfish.tyrus.client.ClientManager;
 public class ShooterClientGUI {
 	final static int HEIGHT = 500; 
 	final static int WIDTH  = 500; 
-	
+
 	private static GamePanel gamePanel; 
 
 	public static void main(String[] args) {
