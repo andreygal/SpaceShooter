@@ -8,12 +8,22 @@ public class ObjectToDraw {
 		private int imageID; 
 		private Point objectPosition; 
 		
-		//constructor 
-		ObjectToDraw(String type, int imageID, Point objectPosition){
+		ObjectToDraw(String type, int imageID) {
 			this.type = type; 
-			this.imageID = imageID; 
+			this.imageID = imageID;
+		}
+		
+		ObjectToDraw(String type, int imageID, Point objectPosition){
+			this(type, imageID); 
 			this.objectPosition = objectPosition; 
 		}
+		//this. in used for clarity in this case
+		ObjectToDraw(String type, int imageID, int x, int y) {
+			this(type, imageID);
+			this.objectPosition = new Point(x,y);
+		}
+		
+		
 		
 		public String getType(){
 			return type; 
