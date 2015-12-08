@@ -1,5 +1,6 @@
 package shooterServer;
 
+import java.awt.Dimension;
 import java.awt.Point;
 /**
  * Represents the computer controlled enemy ship.
@@ -9,9 +10,8 @@ import java.awt.Point;
  */
 public final class EnemyShip extends Ship {
 
-	public EnemyShip(int xSpeed,  Point position){
-		super(xSpeed, 0, path);
-		objectPosition = new Point(position);
+	public EnemyShip(int xSpeed, int imageID, Dimension enemySize, Point enemyPosition){
+		super(xSpeed, 0, imageID, enemySize, enemyPosition);
 	}
 	/**
 	 * @see Ship#shoot()

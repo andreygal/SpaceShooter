@@ -61,12 +61,18 @@ public class ImageProcessor {
 		return images;
 	}
 	
-	public static Dimension getImageDimensions(Image resizedImage){
+	public static Dimension[] getImageDimensions(Image[] resizedImages){
 		
-		Dimension dimension = new Dimension(resizedImage.getWidth(null), resizedImage.getHeight(null)); 
+		Dimension[] dimensions = new Dimension[resizedImages.length]; 
 		
-		return dimension; 
+		for(int i=0; i<resizedImages.length; i++){
+			dimensions[i] = new Dimension(resizedImages[i].getWidth(null), resizedImages[i].getHeight(null));
+		}
+		
+		return dimensions; 
 	}
+	
+	
 	
 }
 
