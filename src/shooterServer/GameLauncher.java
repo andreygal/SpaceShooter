@@ -31,7 +31,8 @@ public class GameLauncher {
 	private	Dimension[] bullets;
 	
 	private ArrayList<PlayerShip> livePlayers;
-	private ArrayList<EnemyShip>  liveBullets;
+	private ArrayList<EnemyShip>  liveEnemies;
+	private ArrayList<Bullet>	  liveBullets; 
 	
 
 	
@@ -53,39 +54,38 @@ public class GameLauncher {
 	
 	public void updateAll() { 
 		//the for loops iterate through all enemy ships, updating their positions and redrawing them
-				for(int i=0; i<5; i++){
-					for(int j=0; j<7; j++){
-						if(enemies[i][j]!=null){
-							if(i%2==0)
-								enemies[i][j].moveLeft();
-							else if(i%2==1)
-								enemies[i][j].moveRight();
-							g.drawImage(enemies[i][j].getImage(), enemies[i][j].objectPosition.x, enemies[i][j].objectPosition.y, null);
-						}
-					}
+		for(int i=0; i<5; i++){
+			for(int j=0; j<7; j++){
+				if(enemyFormation[i][j]!=null){
+					if(i%2==0)
+						enemyFormation[i][j].moveLeft();
+					else if(i%2==1)
+						enemyFormation[i][j].moveRight();
 				}
-				
-				//the two outside for loops iterate through all the enemies on the screen
-				//for each enemy the inner while loops determines if a collision occurred b/w the enemy and the bullet
-				for(int i=0; i<5; i++){
-					for(int j=0; j<7; j++){
-						if(enemies[i][j]!=null){
-							ListIterator <Bullet> iter = bullets.listIterator(); 
-							//iterate through all active bullets
-							while(iter.hasNext()){
-								Bullet bullet = iter.next();
-								if(bullet!=null){
-									Rectangle enemy = enemies[i][j].getRectangle(); 
-									if(enemy.intersects(bullet.getRectangle())){
-										enemies[i][j] = null; 
-										iter.remove();
-										break; 
-									}
-								}
+			}
+		}
+
+		//the two outside for loops iterate through all the enemyFormation on the screen
+		//for each enemy the inner while loops determines if a collision occurred b/w the enemy and the bullet
+		for(int i=0; i<5; i++){
+			for(int j=0; j<7; j++){
+				if(enemyFormation[i][j].isAlive()==true){
+					ListIterator <Bullet> iter = liveBullets.listIterator(); 
+					//iterate through all active bullets
+					while(iter.hasNext()){
+						Bullet bullet = iter.next();
+						if(bullet.isAlive()==true){
+							Rectangle enemy = enemyFormation[i][j].getRectangle(); 
+							if(enemy.intersects(bullet.getRectangle())){
+								enemyFormation[i][j] = null; 
+								iter.remove();
+								break; 
 							}
 						}
 					}
 				}
+			}
+		}
 
 	}
 
