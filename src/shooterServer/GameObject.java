@@ -30,7 +30,10 @@ public abstract class GameObject {
 	 * array index of the the object's image 
 	 */
 	protected int imageID; 
-
+	/**
+	 * alive flag for the game object
+	 */
+	protected boolean alive; 
 	//Default constructor. By default, ints are set to 0 and object references to null.
 	public GameObject(){}
 	
@@ -42,6 +45,7 @@ public abstract class GameObject {
 	 * calculating all the derived attributes like Dimension, Position etc.
 	 */
 	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition) {
+		alive = true; 
 		this.objectSize = objectSize;
 		this.objectPosition = objectPosition; 
 		//set the velocities
@@ -68,5 +72,9 @@ public abstract class GameObject {
 	
 	public Rectangle getRectangle(){
 		return new Rectangle(objectPosition.x, objectPosition.y, objectSize.width, objectSize.height);
+	}
+	
+	public boolean isAlive() {
+		return alive; 
 	}
 }
