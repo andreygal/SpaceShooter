@@ -44,13 +44,17 @@ public abstract class GameObject {
 	 * constructs a game object by resizing the image, setting the velocities and 
 	 * calculating all the derived attributes like Dimension, Position etc.
 	 */
-	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition) {
+	public GameObject(int xSpeed, int ySpeed, int ImageID, Dimension objectSize) {
 		alive = true; 
-		this.objectSize = objectSize;
+		this.objectSize = objectSize; 
+		this.xSpeed = xSpeed; 
+		this.ySpeed = ySpeed; 
+		this.objectPosition = null; 
+	}
+
+	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition) {
+		this(); 
 		this.objectPosition = objectPosition; 
-		//set the velocities
-		this.xSpeed = xSpeed;
-		this.ySpeed = ySpeed;
 	}
 
 	//getters and setters 
@@ -77,4 +81,9 @@ public abstract class GameObject {
 	public boolean isAlive() {
 		return alive; 
 	}
+	
+	public void setAlive(boolean status) {
+		alive = status; 
+	}
 }
+

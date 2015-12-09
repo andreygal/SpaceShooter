@@ -12,8 +12,13 @@ import java.awt.Point;
  */
 public abstract class Ship extends GameObject {
 	//uses the superclass' constructor 
-	public Ship(int xSpeed, int ySpeed, int imageID, Dimension shipSize, Point shipPosition){
-		super(xSpeed, ySpeed, imageID, shipSize, shipPosition);
+	public Ship(int xSpeed, int imageID, Dimension shipSize){
+		super(xSpeed, 0, imageID, shipSize);
+	}
+	
+	public Ship(int xSpeed, int ImageID, Dimension shipSize, Point position) {
+		this(xSpeed, ImageID, shipSize);
+		this.objectPosition = position; 
 	}
 	/**
 	 * Moves the ship to the right. 

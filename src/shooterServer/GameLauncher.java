@@ -31,7 +31,6 @@ public class GameLauncher {
 	private	Dimension[] bullets;
 	
 	private ArrayList<PlayerShip> livePlayers;
-	private ArrayList<EnemyShip>  liveEnemies;
 	private ArrayList<Bullet>	  liveBullets; 
 	
 
@@ -45,6 +44,7 @@ public class GameLauncher {
 		this.players  = ImageProcessor.getImageDimensions(ImageProcessor.PlayerShip);
 		this.enemies  = ImageProcessor.getImageDimensions(ImageProcessor.EnemyShip);
 		this.bullets  = ImageProcessor.getImageDimensions(ImageProcessor.Bullet);
+		livePlayers.add(new PlayerShip(5, 0, players[0], 5, 0, bullets[0]));
 	}
 	
 	public void startGame() {
@@ -52,11 +52,11 @@ public class GameLauncher {
 		
 	}
 	
-	public void updateAll() { 
-		//the for loops iterate through all enemy ships, updating their positions and redrawing them
-		for(int i=0; i<5; i++){
-			for(int j=0; j<7; j++){
-				if(enemyFormation[i][j]!=null){
+	public void updatePositions() { 
+		//the for loops iterate through all enemy ships, updating their positions 
+		for(int i=0; i<formationRows; i++) {
+			for(int j=0; j<formationCols; j++) {
+				if(enemyFormation[i][j].isAlive()) {
 					if(i%2==0)
 						enemyFormation[i][j].moveLeft();
 					else if(i%2==1)
@@ -65,19 +65,34 @@ public class GameLauncher {
 			}
 		}
 
+		//update the positions of all active bullets
+		if(!liveBullets.isEmpty()){
+			ListIterator <Bullet> iter = liveBullets.listIterator(); 
+			while(iter.hasNext()){
+				Bullet bul = iter.next();
+				if(bul.isAlive() || !bul.updatePosition())
+					iter.remove();
+			}
+		}
+
+		//update the positions of all players 
+	}
+
+	public void checkCollisions() {
+
 		//the two outside for loops iterate through all the enemyFormation on the screen
 		//for each enemy the inner while loops determines if a collision occurred b/w the enemy and the bullet
-		for(int i=0; i<5; i++){
-			for(int j=0; j<7; j++){
+		for(int i=0; i<formationRows; i++){
+			for(int j=0; j<formationCols; j++){
 				if(enemyFormation[i][j].isAlive()==true){
 					ListIterator <Bullet> iter = liveBullets.listIterator(); 
 					//iterate through all active bullets
 					while(iter.hasNext()){
 						Bullet bullet = iter.next();
-						if(bullet.isAlive()==true){
+						if(bullet.isAlive()){
 							Rectangle enemy = enemyFormation[i][j].getRectangle(); 
 							if(enemy.intersects(bullet.getRectangle())){
-								enemyFormation[i][j] = null; 
+								enemyFormation[i][j].setAlive(false); 
 								iter.remove();
 								break; 
 							}
@@ -87,23 +102,33 @@ public class GameLauncher {
 			}
 		}
 
-	}
-
-	public void seedEnemies() {
-		//instantiate a 2D array with requested rows and columns 
-		enemyFormation= new EnemyShip[formationRows][formationCols];
-		//the loops populate the 2D array with enemy ships using random .png files from the enemySprites array
-		//each ship is given a starting coordinate 
-		for(int i=0; i<formationRows; i++) {
-			for(int j=0; j<formationCols; j++) {
-				int randImageID = rand.nextInt(enemies.length);
-				enemyFormation[i][j] = new EnemyShip(1, randImageID, enemies[randImageID], seedOrigin);
-				seedOrigin.translate(70, 0);
+		//check players for collisions 
+		ListIterator <Bullet> iter = liveBullets.listIterator(); 
+		for(int i=0; i<numOfPlayers; i++) {
+			while(iter.hasNext()){
+				Bullet bullet = iter.next();
+				if(bullet.isAlive() && livePlayers.get(i).getRectangle().intersects(bullet.getRectangle())) {  
+					livePlayers.get(i).setAlive(false);
+					iter.remove();
+				}
 			}
-			//start the next row from the original x coordinate
-					seedOrigin.move(seedOrigin.x, seedOrigin.y+50);	
-
 		}
 	}
-	
+
+		public void seedEnemies() {
+			//instantiate a 2D array with requested rows and columns 
+			enemyFormation= new EnemyShip[formationRows][formationCols];
+			//the loops populate the 2D array with enemy ships using random .png files from the enemySprites array
+			//each ship is given a starting coordinate 
+			for(int i=0; i<formationRows; i++) {
+				for(int j=0; j<formationCols; j++) {
+					int randImageID = rand.nextInt(enemies.length);
+					enemyFormation[i][j] = new EnemyShip(1, randImageID, enemies[randImageID], seedOrigin);
+					seedOrigin.translate(70, 0);
+				}
+				//start the next row from the original x coordinate
+				seedOrigin.move(seedOrigin.x, seedOrigin.y+50);	
+
+			}
+		}
 }

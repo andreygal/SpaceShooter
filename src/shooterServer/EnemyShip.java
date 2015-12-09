@@ -18,8 +18,8 @@ public final class EnemyShip extends Ship {
 	 * @return a bullet shot from the enemies' bow. Enemies shoot downward.  
 	 */
 	public Bullet shoot(){
-		Point bulletPosition = new Point(objectPosition.x, objectPosition.y+(resizedSprite.getHeight(null))*2+1);	
-		Bullet bullet = new Bullet(-5, "laserRed03.png", bulletPosition, resizedSprite.getWidth(null));
+		Point bulletPosition = new Point(objectPosition.x, objectPosition.y+((int)objectSize.getHeight())*2+1);	
+		Bullet bullet = new Bullet(-5, imageID, objectSize, bulletPosition, (int)objectSize.getWidth());
 		return bullet; 
 	}
 	
