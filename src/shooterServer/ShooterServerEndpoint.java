@@ -11,7 +11,8 @@ import javax.websocket.server.ServerEndpoint;
 @ServerEndpoint(value = "/shooter", decoders = {}, encoders = {})
 public class ShooterServerEndpoint {
 	final static int WIDTH  = 500; 
-	final static int HEIGHT = 500; 
+	final static int HEIGHT = 500;
+	
 	/**This set keeps track of currently connected sessions*/
 	private static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
 	
@@ -30,11 +31,5 @@ public class ShooterServerEndpoint {
 		
 	}
 	
-	private void startGame(){
 		
-	}
-	
-	private void tick(){
-		
-	}
 }

@@ -3,6 +3,7 @@ package shooterServer;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.websocket.EncodeException;
 import javax.websocket.Session;
 
 import messages.ObjectToDraw;
@@ -35,6 +37,7 @@ public class GameLauncher {
 	
 	private ArrayList<PlayerShip> livePlayers;
 	private ArrayList<Bullet>	  liveBullets; 
+	private Stack<ObjectToDraw> objectsToDraw; 
 	
 	private boolean isActive;  
 	
@@ -57,6 +60,12 @@ public class GameLauncher {
 			updatePositions(); 
 			checkCollisions(); 
 			//broadcast to all connected clients
+			objectsToDraw = getObjectsToDraw();
+			
+			while(!objectsToDraw.isEmpty()) {
+				sendObjectToAll(objectsToDraw.pop());
+			}
+		
 		}
 	}
 	
@@ -163,5 +172,17 @@ public class GameLauncher {
 		}
 		
 		return objectsToDraw; 
+	}
+	
+	private void sendObjectToAll(ObjectToDraw objectToDraw) {
+		for(Session s : sessions) {
+			try {
+				s.getBasicRemote().sendObject(objectToDraw);
+			} catch(EncodeException e) {
+				System.out.println("Encode exception");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

@@ -30,7 +30,8 @@ public abstract class GameObject {
 	 * array index of the the object's image 
 	 */
 	protected int imageID; 
-	
+
+	protected boolean isAlive; 
 	//Default constructor. By default, ints are set to 0 and object references to null.
 	public GameObject(){}
 	
@@ -45,7 +46,8 @@ public abstract class GameObject {
 		this.objectSize = objectSize; 
 		this.xSpeed = xSpeed; 
 		this.ySpeed = ySpeed; 
-		this.objectPosition = null; 
+		this.objectPosition = null;
+		this.isAlive = true; 
 	}
 
 	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition) {
@@ -77,6 +79,10 @@ public abstract class GameObject {
 	@Override
 	public final String toString() {
 		return this.getClass().getName(); 
+	}
+	
+	public boolean isAlive() {
+		return isAlive; 
 	}
 }
 

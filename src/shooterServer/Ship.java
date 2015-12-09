@@ -39,4 +39,5 @@ public abstract class Ship extends GameObject {
 	}
 	//ships have to be able to shoot bullets 
 	public abstract Bullet shoot();
+	
 }
