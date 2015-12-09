@@ -2,31 +2,45 @@ package shooterClient;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
 import javax.swing.JFrame;
 import javax.websocket.ClientEndpoint;
 import javax.websocket.CloseReason;
+import javax.websocket.DeploymentException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 
+import org.glassfish.tyrus.client.ClientManager;
+
 import messages.ObjectToDraw;
 import messages.ObjectToDrawDecoder;
-import messages.ObjectToDrawEncoder; 
+import messages.ObjectToDrawEncoder;
+
 
 @ClientEndpoint(decoders = { ObjectToDrawDecoder.class }, encoders = { ObjectToDrawEncoder.class })
 public class ShooterClientGUI {
 	
 	final static int HEIGHT = 500; 
 	final static int WIDTH  = 500; 
-	private static GamePanel gamePanel; 
+	private static GamePanel gamePanel;
+	
+	private static CountDownLatch latch;
+	private Logger logger = Logger.getLogger(this.getClass().getName());
+
 
 	@OnOpen
 	public void onOpen(Session session) { 
+		logger.info("Connected ... " + session.getId());
+		
 		try {
-			session.getBasicRemote().sendText("connected");
-		} catch(IOException e) {
+			session.getBasicRemote().sendText("start");
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -40,17 +54,32 @@ public class ShooterClientGUI {
 	
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
-		
+		logger.info(String.format("Session %s close because of %s",
+				session.getId(), closeReason));
+		latch.countDown();	
 	}
 	
 	
 	public static void main(String[] args) {
-		createAndShowGUI(); 
 		
+		latch = new CountDownLatch(1);
+
+		Session peer;
+		ClientManager client = ClientManager.createClient();
+		try {
+			peer = client.connectToServer(ShooterClientGUI.class, new URI(
+					"ws://localhost:8025/websockets/shooter"));
+			createAndShowGUI(peer);
+			latch.await();
+
+		} catch (DeploymentException | URISyntaxException
+				| InterruptedException | IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	
-	private static void createAndShowGUI(){
+	private static void createAndShowGUI(Session session){
 		//basic GUI setup
         JFrame frame = new JFrame("Alien Invaders");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

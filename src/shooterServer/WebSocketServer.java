@@ -14,7 +14,7 @@ public class WebSocketServer {
 	}
 	
 	public static void runServer() {
-		Server server = new Server("localhost", 8000, "/websockets", null, ShooterServerEndpoint.class);
+		Server server = new Server("localhost", 8025, "/websockets", null, ShooterServerEndpoint.class);
 		
 		try {
 			server.start();
