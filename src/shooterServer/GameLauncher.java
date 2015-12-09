@@ -36,7 +36,7 @@ public class GameLauncher {
 	private ArrayList<PlayerShip> livePlayers;
 	private ArrayList<Bullet>	  liveBullets; 
 	
-
+	private boolean isActive;  
 	
 	GameLauncher(Set<Session> sessions, Point seedOrigin, int formationRows, int formationCols, int numOfPlayers) {
 		this.sessions = sessions; 
@@ -51,14 +51,20 @@ public class GameLauncher {
 	}
 	
 	public void startGame() {
-		
+		isActive = true; 
+		seedEnemies();
+		while(isActive && !livePlayers.isEmpty()) {
+			updatePositions(); 
+			checkCollisions(); 
+			//broadcast to all connected clients
+		}
 	}
 	
 	public void updatePositions() { 
 		//the for loops iterate through all enemy ships, updating their positions 
 		for(int i=0; i<formationRows; i++) {
 			for(int j=0; j<formationCols; j++) {
-				if(enemyFormation[i][j].isAlive()) {
+				if(enemyFormation[i][j]!=null) {
 					if(i%2==0)
 						enemyFormation[i][j].moveLeft();
 					else if(i%2==1)
@@ -72,7 +78,7 @@ public class GameLauncher {
 			ListIterator <Bullet> iter = liveBullets.listIterator(); 
 			while(iter.hasNext()){
 				Bullet bul = iter.next();
-				if(bul.isAlive() || !bul.updatePosition())
+				if((bul==null) || !bul.updatePosition())
 					iter.remove();
 			}
 		}
@@ -86,15 +92,15 @@ public class GameLauncher {
 		//for each enemy the inner while loops determines if a collision occurred b/w the enemy and the bullet
 		for(int i=0; i<formationRows; i++){
 			for(int j=0; j<formationCols; j++){
-				if(enemyFormation[i][j].isAlive()==true){
+				if(enemyFormation[i][j]!=null){
 					ListIterator <Bullet> iter = liveBullets.listIterator(); 
 					//iterate through all active bullets
 					while(iter.hasNext()){
 						Bullet bullet = iter.next();
-						if(bullet.isAlive()){
+						if(bullet!=null){
 							Rectangle enemy = enemyFormation[i][j].getRectangle(); 
 							if(enemy.intersects(bullet.getRectangle())){
-								enemyFormation[i][j].setAlive(false); 
+								enemyFormation[i][j]=null; 
 								iter.remove();
 								break; 
 							}
@@ -109,40 +115,53 @@ public class GameLauncher {
 		for(int i=0; i<numOfPlayers; i++) {
 			while(iter.hasNext()){
 				Bullet bullet = iter.next();
-				if(bullet.isAlive() && livePlayers.get(i).getRectangle().intersects(bullet.getRectangle())) {  
-					livePlayers.get(i).setAlive(false);
+				if((bullet!=null) && livePlayers.get(i).getRectangle().intersects(bullet.getRectangle())) {  
+					livePlayers.remove(i);
 					iter.remove();
 				}
 			}
 		}
 	}
 
-		public void seedEnemies() {
-			//instantiate a 2D array with requested rows and columns 
-			enemyFormation= new EnemyShip[formationRows][formationCols];
-			//the loops populate the 2D array with enemy ships using random .png files from the enemySprites array
-			//each ship is given a starting coordinate 
-			for(int i=0; i<formationRows; i++) {
-				for(int j=0; j<formationCols; j++) {
-					int randImageID = rand.nextInt(enemies.length);
-					enemyFormation[i][j] = new EnemyShip(1, randImageID, enemies[randImageID], seedOrigin);
-					seedOrigin.translate(70, 0);
-				}
-				//start the next row from the original x coordinate
-				seedOrigin.move(seedOrigin.x, seedOrigin.y+50);	
-
+	public void seedEnemies() {
+		//instantiate a 2D array with requested rows and columns 
+		enemyFormation= new EnemyShip[formationRows][formationCols];
+		//the loops populate the 2D array with enemy ships using random .png files from the enemySprites array
+		//each ship is given a starting coordinate 
+		for(int i=0; i<formationRows; i++) {
+			for(int j=0; j<formationCols; j++) {
+				int randImageID = rand.nextInt(enemies.length);
+				enemyFormation[i][j] = new EnemyShip(1, randImageID, enemies[randImageID], seedOrigin);
+				seedOrigin.translate(70, 0);
 			}
+			//start the next row from the original x coordinate
+			seedOrigin.move(seedOrigin.x, seedOrigin.y+50);	
+
+		}
+	}
+
+	public Stack<ObjectToDraw> getObjectsToDraw() {
+		Stack<ObjectToDraw> objectsToDraw = new Stack<ObjectToDraw>();
+		//add enemies to buffer as encodable objects 
+		for(int i=0; i<formationRows; i++){
+			for(int j=0; j<formationCols; j++) {
+				if(enemyFormation[i][j]!=null)
+					objectsToDraw.push(new ObjectToDraw(enemyFormation[i][j].toString(), 
+														enemyFormation[i][j].imageID,
+														enemyFormation[i][j].objectPosition));
+			}
+		}
+		//add players to the buffer 
+		for(PlayerShip ship:livePlayers) {
+			if(ship.isAlive())
+				objectsToDraw.push(new ObjectToDraw(ship.toString(), ship.imageID, ship.objectPosition));
+		}
+		//add bullets to the buffer 
+		for(Bullet bullet:liveBullets) {
+			if(bullet.isAlive())
+				objectsToDraw.push(new ObjectToDraw(bullet.toString(), bullet.imageID, bullet.objectPosition)); 
 		}
 		
-		public Stack<ObjectToDraw> getObjectsToDraw() {
-			Stack<ObjectToDraw> objectsToDraw = new Stack<ObjectToDraw>();
-			//add enemies to buffer as encodable objects 
-			for(int i=0; i<formationRows; i++){
-				for(int j=0; j<formationCols; j++) {
-					objectsToDraw.push(new ObjectToDraw(enemyFormation[i][j].getClass(), 
-									                    enemyFormation[i][j].imageID,
-									                    enemyFormation[i][j].objectPosition));
-				}
-			}
-		}
+		return objectsToDraw; 
+	}
 }

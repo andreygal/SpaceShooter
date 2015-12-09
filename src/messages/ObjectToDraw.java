@@ -12,40 +12,38 @@ public class ObjectToDraw {
 			this.type = type; 
 			this.imageID = imageID;
 		}
-		
-		ObjectToDraw(String type, int imageID, Point objectPosition){
+
+		public ObjectToDraw(String type, int imageID, Point objectPosition){
 			this(type, imageID); 
 			this.objectPosition = objectPosition; 
 		}
 		//this. in used for clarity in this case
-		ObjectToDraw(String type, int imageID, int x, int y) {
+		public ObjectToDraw(String type, int imageID, int x, int y) {
 			this(type, imageID);
 			this.objectPosition = new Point(x,y);
 		}
-		
-		
-		
-		public String getType(){
+
+		public String getType() {
 			return type; 
 		}
 		
-		public int getImageID(){
+		public int getImageID() {
 			return imageID; 
 		}
 		
-		public Point getObjectPosition(){
+		public Point getObjectPosition() {
 			return objectPosition; 
 		}
 		
-		public void setType(String type){
+		public void setType(String type) {
 			this.type = type; 
 		}
 		
-		public void setImageId(int imageID){
+		public void setImageId(int imageID) {
 			this.imageID = imageID; 
 		}
 		
-		public void setObjectPosition(Point objectPosition){
+		public void setObjectPosition(Point objectPosition) {
 			this.objectPosition = objectPosition; 
 		}
 }
