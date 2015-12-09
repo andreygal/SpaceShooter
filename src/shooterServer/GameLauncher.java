@@ -9,8 +9,11 @@ import java.util.HashSet;
 import java.util.ListIterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.websocket.Session;
+
+import messages.ObjectToDraw;
 
 public class GameLauncher {
 	/**A 2D array for holding references to enemy ships. can be used to seed different enemy formations. */
@@ -48,7 +51,6 @@ public class GameLauncher {
 	}
 	
 	public void startGame() {
-		
 		
 	}
 	
@@ -129,6 +131,18 @@ public class GameLauncher {
 				//start the next row from the original x coordinate
 				seedOrigin.move(seedOrigin.x, seedOrigin.y+50);	
 
+			}
+		}
+		
+		public Stack<ObjectToDraw> getObjectsToDraw() {
+			Stack<ObjectToDraw> objectsToDraw = new Stack<ObjectToDraw>();
+			//add enemies to buffer as encodable objects 
+			for(int i=0; i<formationRows; i++){
+				for(int j=0; j<formationCols; j++) {
+					objectsToDraw.push(new ObjectToDraw(enemyFormation[i][j].getClass(), 
+									                    enemyFormation[i][j].imageID,
+									                    enemyFormation[i][j].objectPosition));
+				}
 			}
 		}
 }

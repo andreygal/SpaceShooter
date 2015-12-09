@@ -11,7 +11,7 @@ import java.awt.Point;
 public final class EnemyShip extends Ship {
 
 	public EnemyShip(int xSpeed, int imageID, Dimension enemySize, Point enemyPosition){
-		super(xSpeed, 0, imageID, enemySize, enemyPosition);
+		super(xSpeed, imageID, enemySize, enemyPosition);
 	}
 	/**
 	 * @see Ship#shoot()
