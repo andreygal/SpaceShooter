@@ -171,6 +171,9 @@ public class GameLauncher {
 				objectsToDraw.push(new ObjectToDraw(bullet.toString(), bullet.imageID, bullet.objectPosition)); 
 		}
 		
+		//terminator object used to signal the end of the buffer
+		objectsToDraw.push(new ObjectToDraw("terminator", -1, null));
+		
 		return objectsToDraw; 
 	}
 	

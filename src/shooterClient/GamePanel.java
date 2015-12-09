@@ -111,11 +111,15 @@ public class GamePanel extends JPanel implements KeyListener{
     	public void keyTyped(KeyEvent e){}
     	
     	
-    	public void receiveObjectToDraw(ObjectToDraw object){
+    	public void receiveObjectToDraw(ObjectToDraw object) {
     		if(object.getType()=="terminator")
     			repaint(); 
     		else
     			buffer.push(object); 
+    	}
+    	
+    	public void drawAll() {
+    		
     	}
     	
     	
