@@ -55,8 +55,8 @@ public class ShooterServerEndpoint {
 
 
 			System.out.println("Server endpoint connected and listening");
-			gameController = new GameLauncher(peer, new Point(10,10), 5, 7, 1);	
-			GameStarter starter = new GameStarter(); 
+			gameController = new GameLauncher(peer, new Point(10,10), 1, 2, 1);	
+			new GameStarter(); 
 
 
 		}	

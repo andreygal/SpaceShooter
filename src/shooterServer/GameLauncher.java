@@ -72,7 +72,7 @@ public class GameLauncher {
 
 		seedEnemies();
 		
-		while(isActive && !livePlayers.isEmpty() && counter > 0) {
+		while(isActive && !livePlayers.isEmpty()) {
 
 				//calculating delta time (time between frames)
 				//1.0e9 because nanoTime() function returns nanoseconds but we need seconds
@@ -100,7 +100,6 @@ public class GameLauncher {
 
 			//as the result each frame will take approx. the same time
 			//and loop will iterate 60 times per second only not 5000-10000 as before
-				counter--; 
 		}
 		
 	}
