@@ -1,5 +1,7 @@
 package shooterServer;
-
+/*
+ * A generic Glassfish server. Needs to be launched prior to running the client application. 
+ */
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
