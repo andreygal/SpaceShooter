@@ -32,16 +32,16 @@ public class ShooterServerEndpoint {
 		logger.info("Server Connected ... " + session.getId());
 		System.out.println("Server endpoint onOpen");
 
-		try {
-			session.getBasicRemote().sendObject(new ObjectToDraw("PlayerShip", 0, new Point(10, 10)));
-			session.getBasicRemote().sendObject(new ObjectToDraw("terminator", 0, new Point(0,0)));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EncodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		//		try {
+		//			session.getBasicRemote().sendObject(new ObjectToDraw("PlayerShip", 0, new Point(10, 10)));
+		//			session.getBasicRemote().sendObject(new ObjectToDraw("terminator", 0, new Point(0,0)));
+		//		} catch (IOException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		} catch (EncodeException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 
 
 	}
@@ -53,55 +53,33 @@ public class ShooterServerEndpoint {
 
 		if(message.equals("start")) {
 
-
 			System.out.println("Server endpoint connected and listening");
 			gameController = new GameLauncher(peer, new Point(10,10), 1, 2, 1);	
 			new GameStarter(); 
 
+		}	
+
+	}
+
+	@OnClose
+	public void onClose(){
+
+	}
+
+	class GameStarter implements Runnable {
+		// Create a second thread.
+		Thread t;
+
+		GameStarter() {
+			// Create a new, second thread
+			t = new Thread(this, "Starter Thread");
+			t.start(); // Start the thread
+		}
+		// This is the entry point for the second thread.
+		public void run() {
+			System.out.println("Starting the thread");
+			gameController.startGame();
 
 		}	
-		try {
-			peer.getBasicRemote().sendObject(new ObjectToDraw("PlayerShip", 0, new Point(10, 10)));
-			peer.getBasicRemote().sendObject(new ObjectToDraw("terminator", 0, new Point(0,0)));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (EncodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
-
-	//		try {
-	//			System.out.println("sending test objects"); 
-	//			peer.getBasicRemote().sendObject(new ObjectToDraw("PlayerShip", 0, new Point(10, 10)));
-	//			peer.getBasicRemote().sendObject(new ObjectToDraw("terminator", 0, new Point(0,0)));
-	//		} catch (EncodeException e) {
-	//			System.out.println("encode ex");
-	//		} catch (IOException e) {
-	//			e.printStackTrace();
-	//		}
-
-
-@OnClose
-public void onClose(){
-
-}
-
-class GameStarter implements Runnable {
-	// Create a second thread.
-	Thread t;
-
-	GameStarter() {
-		// Create a new, second thread
-		t = new Thread(this, "Starter Thread");
-		t.start(); // Start the thread
-	}
-	// This is the entry point for the second thread.
-	public void run() {
-		System.out.println("Starting the thread");
-		gameController.startGame();
-
-	}	
-}
 }

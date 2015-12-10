@@ -65,7 +65,6 @@ public class GameLauncher {
 	public void startGame() {
 		System.out.println("gameLauncher is starting the game"); 
 		isActive = true; 
-		int counter = 10; 
 
 		long currTime, prevTime = System.nanoTime();
 		double dt;

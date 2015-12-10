@@ -62,7 +62,7 @@ public class ShooterClientGUI implements ActionListener, KeyListener {
 		gamePanel.receiveObjectToDraw(object);
 		
 		try {
-			Thread.sleep(50);
+			Thread.sleep(20);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -74,14 +74,11 @@ public class ShooterClientGUI implements ActionListener, KeyListener {
 	public void onClose(Session session, CloseReason closeReason) {
 		logger.info(String.format("Session %s close because of %s",
 				session.getId(), closeReason));
-	//	latch.countDown();	
 	}
 	
 	
 	public static void main(String[] args) {
-//		
-//		latch = new CountDownLatch(1);
-//
+		
 		Session peer;
 		ClientManager client = ClientManager.createClient();
 		

@@ -80,7 +80,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         			switch(type) {
 
-        			case "PlayerShip":
+        			case "shooterServer.PlayerShip":
         				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
         				break;
 
