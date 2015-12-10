@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import javax.websocket.Session;
 import messages.ObjectToDraw;
 import shooterServer.ImageProcessor;
 
-public class GamePanel extends JPanel implements KeyListener{
+public class GamePanel extends JPanel implements ActionListener {
         /** Stores the insets for the frame. Used for correcting the coordinates of the player's ship.*/
         private Insets gpInsets; 
         /**stores the end game message*/
@@ -33,15 +34,22 @@ public class GamePanel extends JPanel implements KeyListener{
         ImageProcessor imageProcessor; 
         
         Session session; 
+       
+        static final int FRAME_RATE = 30; // animation proceeds at 30 frames per second
+    	Timer t;	// animation timer
+ 
+        
+        
         
         //GamePanel constructor. SetFocusable has to be set to true for the panel to respond to player's input.
         public GamePanel (Session session) {
+        	 t = new Timer(1000/FRAME_RATE, this);
         		this.session = session; 
         		this.imageProcessor = new ImageProcessor(); 
                 isRunning = true; 
                 gpInsets = getInsets(); 
                 setBackground(Color.BLACK);
-                setFocusable(true);
+                //setFocusable(true);
                 buffer = new ConcurrentLinkedQueue<ObjectToDraw>(); 
                 System.out.println("Panel Created");
         }
@@ -72,7 +80,7 @@ public class GamePanel extends JPanel implements KeyListener{
 
         			switch(type) {
 
-        			case "shooterServer.PlayerShip":
+        			case "PlayerShip":
         				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
         				break;
 
@@ -99,29 +107,7 @@ public class GamePanel extends JPanel implements KeyListener{
         }
         
 
-    	/**
-    	 * CHANGED
-    	 * @param e accepts a KeyEvent coming from a left or right cursor arrows
-    	 * Moves the ship left or right depending on user input
-    	 */
-    	@Override
-    	public void keyPressed(KeyEvent e){
-    		if(e.getKeyCode()==KeyEvent.VK_RIGHT)
-    		
-    		if(e.getKeyCode()==KeyEvent.VK_LEFT);
-    	}
-    	/**
-    	 * @param e is the key released event that will call the shoot method of the player's ship
-    	 * if the key released was cursor up.
-    	 */
-    	@Override
-    	public void keyReleased(KeyEvent e){
-    		if(e.getKeyCode()==KeyEvent.VK_UP);
-    	}
     	
-    	//method not used. implementation forced by the interface. 
-    	@Override
-    	public void keyTyped(KeyEvent e){}
     	
     	
     	public void receiveObjectToDraw(ObjectToDraw object) {
@@ -139,21 +125,24 @@ public class GamePanel extends JPanel implements KeyListener{
     	public void drawAll() {
     		
     	}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// if this is an event from the Timer, call the method that advances the animation
+			if (e.getSource() == t) {
+				tick();
+			}
+		}
     	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
+		 /* Make sure all GameObjects are in the right place (do any need to be removed? do we need to create any new ones?), then redraw game
+		 */
+
+		private void tick() {
+			repaint();		// ask to have the game redrawn (this will invoke paintComponent() when the system says the time is right)
+		}
+
+		void go() {
+			t.start();
+		}	
     	
 }

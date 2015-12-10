@@ -1,6 +1,10 @@
 package shooterClient;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,14 +28,14 @@ import messages.ObjectToDrawEncoder;
 
 
 @ClientEndpoint(decoders = { ObjectToDrawDecoder.class }, encoders = { ObjectToDrawEncoder.class })
-public class ShooterClientGUI {
+public class ShooterClientGUI implements ActionListener, KeyListener {
 	
 	final static int HEIGHT = 500; 
 	final static int WIDTH  = 500; 
 	
 	private static GamePanel gamePanel;
 	
-	private static CountDownLatch latch;
+	//private static CountDownLatch latch;
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 
@@ -70,14 +74,14 @@ public class ShooterClientGUI {
 	public void onClose(Session session, CloseReason closeReason) {
 		logger.info(String.format("Session %s close because of %s",
 				session.getId(), closeReason));
-		latch.countDown();	
+	//	latch.countDown();	
 	}
 	
 	
 	public static void main(String[] args) {
-		
-		latch = new CountDownLatch(1);
-
+//		
+//		latch = new CountDownLatch(1);
+//
 		Session peer;
 		ClientManager client = ClientManager.createClient();
 		
@@ -85,10 +89,10 @@ public class ShooterClientGUI {
 			peer = client.connectToServer(ShooterClientGUI.class, new URI(
 					"ws://localhost:8025/websockets/shooter"));
 			//createAndShowGUI(peer);
-			latch.await();
+			//latch.await();
 
 		} catch (DeploymentException | URISyntaxException
-				| InterruptedException | IOException e) {
+				/*| InterruptedException*/ | IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -110,5 +114,34 @@ public class ShooterClientGUI {
         
         
     }
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		
+	}
+
+	/**
+	 * CHANGED
+	 * @param e accepts a KeyEvent coming from a left or right cursor arrows
+	 * Moves the ship left or right depending on user input
+	 */
+	@Override
+	public void keyPressed(KeyEvent e){
+		if(e.getKeyCode()==KeyEvent.VK_RIGHT)
+		
+		if(e.getKeyCode()==KeyEvent.VK_LEFT);
+	}
+	/**
+	 * @param e is the key released event that will call the shoot method of the player's ship
+	 * if the key released was cursor up.
+	 */
+	@Override
+	public void keyReleased(KeyEvent e){
+		if(e.getKeyCode()==KeyEvent.VK_UP);
+	}
+	
+	//method not used. implementation forced by the interface. 
+	@Override
+	public void keyTyped(KeyEvent e){}
 }

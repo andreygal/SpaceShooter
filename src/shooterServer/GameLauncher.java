@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class GameLauncher {
 	
 	private ArrayList<PlayerShip> livePlayers;
 	private ArrayList<Bullet>	  liveBullets; 
-	private ConcurrentLinkedQueue<ObjectToDraw> objectsToDraw; 
+	private LinkedList<ObjectToDraw> objectsToDraw; 
 	
 	private boolean isActive;  
 	
@@ -69,7 +70,7 @@ public class GameLauncher {
 		long currTime, prevTime = System.nanoTime();
 		double dt;
 
-		//seedEnemies();
+		seedEnemies();
 		
 		while(isActive && !livePlayers.isEmpty() && counter > 0) {
 
@@ -79,12 +80,12 @@ public class GameLauncher {
 				dt = (currTime - prevTime) / 1.0e9;
 				prevTime = currTime;
 
-//			updatePositions(); 
-//			checkCollisions(); 
+			updatePositions(); 
+			checkCollisions(); 
 			//broadcast to all connected clients
 			objectsToDraw = getObjectsToDraw();
 
-			while(!objectsToDraw.isEmpty()) {
+			while(!(objectsToDraw.isEmpty())) {
 				ObjectToDraw bufferObject = objectsToDraw.remove(); 
 				sendObjectToAll(bufferObject);
 			}
@@ -93,12 +94,13 @@ public class GameLauncher {
 				// then sleep the current thread for remaining time this frame
 				if( dt < 1.0/60)
 					try	{
-						Thread.currentThread().sleep((long)((1.0/60 - dt) * 1000));
+						Thread.currentThread();
+						Thread.sleep((long)((1.0/60 - dt) * 1000));
 					} catch (InterruptedException e) {}
 
 			//as the result each frame will take approx. the same time
 			//and loop will iterate 60 times per second only not 5000-10000 as before
-				//counter--; 
+				counter--; 
 		}
 		
 	}
@@ -186,18 +188,18 @@ public class GameLauncher {
 		}
 	}
 
-	public ConcurrentLinkedQueue<ObjectToDraw> getObjectsToDraw() {
+	public LinkedList<ObjectToDraw> getObjectsToDraw() {
 		
-		ConcurrentLinkedQueue<ObjectToDraw> objectsToDraw = new ConcurrentLinkedQueue<ObjectToDraw>();
+		LinkedList<ObjectToDraw> objectsToDraw = new LinkedList<ObjectToDraw>();
 		//add enemies to buffer as encodable objects 
-//		for(int i=0; i<formationRows; i++){
-//			for(int j=0; j<formationCols; j++) {
-//				if(enemyFormation[i][j]!=null)
-//					objectsToDraw.add(new ObjectToDraw(enemyFormation[i][j].toString(), 
-//														enemyFormation[i][j].imageID,
-//														enemyFormation[i][j].objectPosition));
-//			}
-//		}
+		for(int i=0; i<formationRows; i++){
+			for(int j=0; j<formationCols; j++) {
+				if(enemyFormation[i][j]!=null)
+					objectsToDraw.add(new ObjectToDraw(enemyFormation[i][j].toString(), 
+														enemyFormation[i][j].imageID,
+														enemyFormation[i][j].objectPosition));
+			}
+		}
 		//add players to the buffer 
 		for(PlayerShip ship:livePlayers) {
 			if(ship.isAlive()){
