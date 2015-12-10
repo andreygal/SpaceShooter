@@ -194,6 +194,7 @@ public class GameLauncher {
 		for(int i=0; i<formationRows; i++){
 			for(int j=0; j<formationCols; j++) {
 				if(enemyFormation[i][j]!=null)
+					System.out.println("Encoding enemy object");
 					objectsToDraw.add(new ObjectToDraw(enemyFormation[i][j].toString(), 
 														enemyFormation[i][j].imageID,
 														enemyFormation[i][j].objectPosition));
@@ -214,7 +215,8 @@ public class GameLauncher {
 		}
 		
 		//terminator object used to signal the end of the buffer
-		objectsToDraw.add(new ObjectToDraw("terminator", -1, null));
+		System.out.println("Adding terminator");
+		objectsToDraw.add(new ObjectToDraw("terminator", -1, 0, 0));
 		
 		return objectsToDraw; 
 	}
