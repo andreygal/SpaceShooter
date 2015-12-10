@@ -19,7 +19,7 @@ public class WebSocketServer {
 		try {
 			server.start();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-			System.out.print("Press any key to stop the server");
+			System.out.println("Press any key to stop the server");
 			reader.readLine(); 
 		} catch (DeploymentException e) {
 			System.out.println("Deployment Exception");

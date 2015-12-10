@@ -24,7 +24,12 @@ public final class PlayerShip extends Ship {
 	 */
 	public PlayerShip(int xSpeed, int imageID, Dimension playerShipSize, int bulletVelocity,
 					  int bulletImageID, Dimension bulletSize) {
+		
 		super(xSpeed, imageID, playerShipSize);
+		
+		//the starting position of the player's ship, calculated to be the middle of the screen.
+		this.objectPosition = new Point(((ShooterServerEndpoint.WIDTH-this.getWidth())/2), (ShooterServerEndpoint.HEIGHT-this.getHeight()*2)); 	
+		
 		this.bulletVelocity = bulletVelocity;
 		this.bulletImageID  = bulletImageID;
 		this.bulletSize = bulletSize; 

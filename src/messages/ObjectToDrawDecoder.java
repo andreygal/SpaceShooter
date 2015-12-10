@@ -15,10 +15,10 @@ public class ObjectToDrawDecoder implements Decoder.Text<ObjectToDraw> {
 	
 		JsonObject jsonObject = Json.createReader(new StringReader(jsonMessage)).readObject(); 
 	
-		ObjectToDraw objectToDraw = new ObjectToDraw((jsonObject.getString("type")), 
-                                  Integer.parseInt(jsonObject.getString("imageID")),
-                                Integer.parseInt(jsonObject.getString("xPosition")),
-                                Integer.parseInt(jsonObject.getString("yPosition")));
+		ObjectToDraw objectToDraw = new ObjectToDraw( jsonObject.getString("type"), 
+                                  					  jsonObject.getInt("imageID"),
+                                  					  jsonObject.getInt("xPosition"),
+                                  					  jsonObject.getInt("yPosition"));
 								 
 		return objectToDraw; 
 	}

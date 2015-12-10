@@ -11,10 +11,11 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Random;
-import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.websocket.Session;
 
 import messages.ObjectToDraw;
 import shooterServer.ImageProcessor;
@@ -27,14 +28,22 @@ public class GamePanel extends JPanel implements KeyListener{
         /**checks if one of the end game conditions has been met*/
         private boolean isRunning; 
         /**buffer for objects to be rendered*/
-        Stack<ObjectToDraw> buffer = new Stack<ObjectToDraw>();
+        ConcurrentLinkedQueue<ObjectToDraw> buffer;
+        
+        ImageProcessor imageProcessor; 
+        
+        Session session; 
         
         //GamePanel constructor. SetFocusable has to be set to true for the panel to respond to player's input.
-        public GamePanel () {
+        public GamePanel (Session session) {
+        		this.session = session; 
+        		this.imageProcessor = new ImageProcessor(); 
                 isRunning = true; 
                 gpInsets = getInsets(); 
                 setBackground(Color.BLACK);
                 setFocusable(true);
+                buffer = new ConcurrentLinkedQueue<ObjectToDraw>(); 
+                System.out.println("Panel Created");
         }
       
         /**
@@ -45,6 +54,7 @@ public class GamePanel extends JPanel implements KeyListener{
         @Override
         public void paintComponent(Graphics g) {
         	super.paintComponent(g);
+        	System.out.println("Drawing objects using paintComp");
         	//if there are player's ships in space, render the game.
         	ObjectToDraw object;
 
@@ -55,24 +65,27 @@ public class GamePanel extends JPanel implements KeyListener{
         	if(isRunning){
         		while(!buffer.isEmpty()){
 
-        			object   = buffer.pop();	
+        			object   = buffer.remove();	
         			type     = object.getType(); 
         			imageID  = object.getImageID(); 
         			position = object.getObjectPosition(); 
 
         			switch(type) {
 
-        			case "PlayerShip":
+        			case "shooterServer.PlayerShip":
         				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
         				break;
 
-        			case "EnemyShip": 
+        			case "shooterServer.EnemyShip": 
         				g.drawImage(ImageProcessor.EnemyShip[imageID], position.x, position.y, null);
         				break;
 
-        			case "Bullet":
+        			case "shooterServer.Bullet":
         				g.drawImage(ImageProcessor.Bullet[imageID], position.x, position.y, null);
-        				break; 
+        				break;
+        				
+        			case "terminator":
+        				continue;
 
         			default:
         				System.out.println("Invalid image type");
@@ -112,10 +125,15 @@ public class GamePanel extends JPanel implements KeyListener{
     	
     	
     	public void receiveObjectToDraw(ObjectToDraw object) {
-    		if(object.getType()=="terminator")
+    		System.out.println("Panel is receiving an object");
+    		
+    		if(object.getType().equals("terminator")){
+    			System.out.println("terminator received");
     			repaint(); 
-    		else
-    			buffer.push(object); 
+    		} else
+    			System.out.println("Adding object to panel buffer");
+    			System.out.println(object.getType() + " " + object.getImageID() + " " + object.getObjectPosition());
+    			buffer.add(object); 
     	}
     	
     	public void drawAll() {

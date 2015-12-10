@@ -28,6 +28,7 @@ public class ShooterClientGUI {
 	
 	final static int HEIGHT = 500; 
 	final static int WIDTH  = 500; 
+	
 	private static GamePanel gamePanel;
 	
 	private static CountDownLatch latch;
@@ -37,20 +38,33 @@ public class ShooterClientGUI {
 	@OnOpen
 	public void onOpen(Session session) { 
 		logger.info("Connected ... " + session.getId());
+		System.out.println("in onOpen");
 		
 		try {
+			createAndShowGUI(session);
 			session.getBasicRemote().sendText("start");
+			System.out.println("sending start to server");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		
 	}
 	
 	@OnMessage
 	public void onMessage(Session session, ObjectToDraw object) {
-	
+		
+		logger.info("Received ... " + object.toString());
+		
 		gamePanel.receiveObjectToDraw(object);
 		
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 	}
+	
 	
 	@OnClose
 	public void onClose(Session session, CloseReason closeReason) {
@@ -66,10 +80,11 @@ public class ShooterClientGUI {
 
 		Session peer;
 		ClientManager client = ClientManager.createClient();
+		
 		try {
 			peer = client.connectToServer(ShooterClientGUI.class, new URI(
 					"ws://localhost:8025/websockets/shooter"));
-			createAndShowGUI(peer);
+			//createAndShowGUI(peer);
 			latch.await();
 
 		} catch (DeploymentException | URISyntaxException
@@ -87,7 +102,7 @@ public class ShooterClientGUI {
         
         // bare bones: just add a panel where the game objects are drawn
         
-        GamePanel gamePanel = new GamePanel();
+        gamePanel = new GamePanel(session);
         frame.add(gamePanel, BorderLayout.CENTER);
 
         frame.setSize(WIDTH, HEIGHT);

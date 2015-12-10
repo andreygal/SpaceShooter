@@ -16,7 +16,7 @@ public class ImageProcessor {
 		public static Image[] Bullet; 
 
 		
-	ImageProcessor(){
+	public ImageProcessor(){
 		players = new File("././resource/Players");
 		enemies = new File("././resource/Enemies");
 		bullets = new File("././resource/Bullets");
