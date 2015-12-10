@@ -1,21 +1,28 @@
 package shooterServer;
+/**
+ * @author Andrey Galper 
+ * The ImageProcessor class is responsible for handling the game's 
+ * graphical resources. It reaches into directories specified by File
+ * objects, extracts the images, resizes them to fit the game window,
+ * and obtain's the dimensions of each image to be used later by 
+ * the GameLauncher class.  
+ */
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
 public class ImageProcessor {
-	
-		private File players, enemies, bullets; 
-		public static Image[] PlayerShip; 
-		public static Image[] EnemyShip; 
-		public static Image[] Bullet; 
+	//to store the images
+	private File players, enemies, bullets; 
+	public static Image[] PlayerShip; 
+	public static Image[] EnemyShip; 
+	public static Image[] Bullet; 
 
-		
+	//constructor initializes the respective arrays 	
 	public ImageProcessor(){
 		players = new File("././resource/Players");
 		enemies = new File("././resource/Enemies");
@@ -25,14 +32,18 @@ public class ImageProcessor {
 		PlayerShip = getResizedImages(players);
 		EnemyShip  = getResizedImages(enemies);
 		Bullet     = getResizedImages(bullets);
-		}
-		
+	}
 
-		//for testing
-//		for (int i = 0; i < PlayerShip.length; i++) {
-//			System.out.println(PlayerShip[i]);
-//		}
 
+	//test loop
+	//		for (int i = 0; i < PlayerShip.length; i++) {
+	//			System.out.println(PlayerShip[i]);
+	//		}
+	/**
+	 * Obtains image file from a given directory 
+	 * @param imageDir is the directory holding the images 
+	 * @return an array holding resized images for use by the game
+	 */
 	public static Image[] getResizedImages(File imageDir) {
 		// resize images and store them in respective arrays
 		File[] imageList = imageDir.listFiles();
@@ -60,46 +71,24 @@ public class ImageProcessor {
 
 		return images;
 	}
-	
+	/**
+	 *	Calculates the dimensions of images in a given array of resized sprites.
+	 *	Image is linked to its dimensions via the array index 
+	 * @param resizedImages
+	 * @return an array containing dimensions.
+	 */
 	public static Dimension[] getImageDimensions(Image[] resizedImages){
-		
+
 		Dimension[] dimensions = new Dimension[resizedImages.length]; 
-		
+
 		for(int i=0; i<resizedImages.length; i++){
 			dimensions[i] = new Dimension(resizedImages[i].getWidth(null), resizedImages[i].getHeight(null));
 		}
-		
 		return dimensions; 
 	}
-	
-	
-	
+
+
+
 }
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+

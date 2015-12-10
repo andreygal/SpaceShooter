@@ -10,28 +10,20 @@ import java.awt.Rectangle;
  * @author Andrey Galper 
  */
 public abstract class GameObject {
-	/**
-	 * the x velocity of the object
-	 */
+	/** the x velocity of the object*/
 	protected int xSpeed;
-	/**
-	 * the y velocity of the object
-	 */
+	/**the y velocity of the object*/
 	protected int ySpeed;
-	/**
-	 * the width and height of the object
-	 */
+	/**the width and height of the object*/
 	protected Dimension objectSize; 
-	/**
-	 * the coordinates of the top left corner of the object 
-	 */
+	/**the coordinates of the top left corner of the object*/
 	protected Point objectPosition;  
-	/**
-	 * array index of the the object's image 
-	 */
+	/**array index where the the object's image is stored*/
 	protected int imageID; 
-
+	/**is the object alive*/
 	protected boolean isAlive; 
+	/**true if the object was updated*/ 
+	protected boolean isUpdated; 
 	//Default constructor. By default, ints are set to 0 and object references to null.
 	public GameObject(){}
 	
@@ -42,12 +34,13 @@ public abstract class GameObject {
 	 * constructs a game object by resizing the image, setting the velocities and 
 	 * calculating all the derived attributes like Dimension, Position etc.
 	 */
-	public GameObject(int xSpeed, int ySpeed, int ImageID, Dimension objectSize) {
+	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize) {
 		this.objectSize = objectSize; 
 		this.xSpeed = xSpeed; 
 		this.ySpeed = ySpeed; 
-		this.objectPosition = null;
+		this.imageID = imageID;  
 		this.isAlive = true; 
+		this.isUpdated = true; 
 	}
 
 	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition) {

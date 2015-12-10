@@ -2,9 +2,6 @@ package shooterServer;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.ListIterator;
 /**
  * Represents the keyboard controlled player's ship.
  * 
@@ -29,7 +26,7 @@ public final class PlayerShip extends Ship {
 		
 		//the starting position of the player's ship, calculated to be the middle of the screen.
 		this.objectPosition = new Point(((ShooterServerEndpoint.WIDTH-this.getWidth())/2), (ShooterServerEndpoint.HEIGHT-this.getHeight()*2)); 	
-		
+		//set the parameters of bullets fired by this ship 
 		this.bulletVelocity = bulletVelocity;
 		this.bulletImageID  = bulletImageID;
 		this.bulletSize = bulletSize; 

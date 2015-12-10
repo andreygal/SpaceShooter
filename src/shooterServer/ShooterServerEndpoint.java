@@ -29,7 +29,7 @@ public class ShooterServerEndpoint {
 	final static int HEIGHT = 500;
 	/**This set keeps track of currently connected sessions. Disabled for debugging.*/
 	//private static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
-
+	Session s; 
 	GameLauncher gameController; 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	/**
@@ -41,7 +41,7 @@ public class ShooterServerEndpoint {
 	 */
 	@OnOpen
 	public void onOpen(Session session) {
-
+		s = session; 
 		logger.info("Server Connected ... " + session.getId());
 		System.out.println("Server endpoint onOpen");
 
@@ -64,7 +64,6 @@ public class ShooterServerEndpoint {
 			//if the signal from client is received, start a new thread
 			//using the inner class below 
 			System.out.println("Server endpoint connected and listening");
-			gameController = new GameLauncher(peer, new Point(10,10), 1, 2, 1);	
 			new GameStarter(); 
 
 		}	
@@ -90,6 +89,7 @@ public class ShooterServerEndpoint {
 
 		GameStarter() {
 			// Create a new, second thread
+			gameController = new GameLauncher(s, new Point(10,10), 2, 2, 1);	
 			t = new Thread(this, "Starter Thread");
 			t.start(); // Start the thread
 		}

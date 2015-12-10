@@ -85,7 +85,7 @@ public class ShooterClientGUI {
 		gamePanel.receiveObjectToDraw(object);
 		//used to control the speed of rendering. may be rendered obsolete.
 		try {
-			Thread.sleep(20);
+			Thread.sleep(30);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

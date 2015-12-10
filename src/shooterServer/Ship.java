@@ -5,13 +5,10 @@ import java.awt.Point;
 
 /**
  * This class abstracts the behaviors common to ships. 
- * 
  * @author Andrey Galper
- * 
- *
  */
 public abstract class Ship extends GameObject {
-	//uses the superclass' constructor 
+	//uses the superclass' constructor. ships do not move vertically  
 	public Ship(int xSpeed, int imageID, Dimension shipSize){
 		super(xSpeed, 0, imageID, shipSize);
 	}
