@@ -14,13 +14,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.websocket.EncodeException;
 import javax.websocket.Session;
@@ -36,14 +32,12 @@ public class GameLauncher {
 	private int formationRows; 
 	/**Number of columns in the enemy formation*/
 	private int formationCols; 
-	/**Number of players connected to the game*/
-	private int numOfPlayers; 
 	/**Used to choose a random image for the enemy ship*/ 
 	private Random rand = new Random();
-	/**A set representing current open sessions*/
-	//private final Set<Session> sessions; 
-	Session session; 
-	/**Same class is used by the client. In this case it provides the 
+	/**The computation rate of the program. Match with FPS of the client*/
+	private int fps; 
+	/**
+	 * Same class is used by the client. In this case it provides the 
 	 * dimensions of all the game objects to the GameLauncher
 	 */
 	ImageProcessor imageProcessor; 
@@ -61,29 +55,32 @@ public class GameLauncher {
 	private LinkedList<ObjectToDraw> objectsToDraw; 
 	/**If the game is over, set to false*/
 	private boolean isActive;  
+	/**number of players*/
+	private int numOfPlayers; 
 	/**
-	 * Contructor sets up and initializes the actual "game" 
-	 * @param session Holds a single session. Will be replaced by a collection of sessions for multiplayer.
+	 * Constructor sets up and initializes the actual "game" 
 	 * @param seedOrigin Where to start seeding the enemies 
 	 * @param formationRows How many rows of enemies
 	 * @param formationCols How many columns of enemies
-	 * @param numOfPlayers  The number of connected players. 
 	 */
 	GameLauncher(Point seedOrigin, int formationRows, int formationCols, int numOfPlayers) {
+		//set up parameters for the enemy formation 
 		this.seedOrigin = seedOrigin; 
 		this.formationRows = formationRows; 
 		this.formationCols = formationCols; 
-		this.numOfPlayers = numOfPlayers; 
 		//create an image processor and obtain the dimension data used for computations
 		this.imageProcessor = new ImageProcessor(); 
 		this.players  = ImageProcessor.getImageDimensions(ImageProcessor.PlayerShip);
 		this.enemies  = ImageProcessor.getImageDimensions(ImageProcessor.EnemyShip);
 		this.bullets  = ImageProcessor.getImageDimensions(ImageProcessor.Bullet);
+		this.numOfPlayers = numOfPlayers; 
 		//initialize collections holding respective game objects 
 		livePlayers = new ArrayList<PlayerShip>();  
 		liveBullets = new ArrayList<Bullet>(); 
 		//add a test player
 		livePlayers.add(new PlayerShip(5, 0, players[0], 5, 0, bullets[0], 0));
+		//set the computation rate
+		fps = 60; 
 		System.out.println("Launcher Created");
 	}
 	/**
@@ -102,48 +99,49 @@ public class GameLauncher {
 		seedEnemies();
 		//start the main game loop
 		while(isActive && !livePlayers.isEmpty()) {
-
 				//calculating delta time (time between frames)
-				//1.0e9 since nanoTime() returns nanoseconds that we need to convert to seconds
-				currTime = System.nanoTime();
-				dt = (currTime - prevTime) / 1.0e9;
-				prevTime = currTime;
-			//update the positions of all the objects
+            	//1.0e9 since nanoTime() returns nanoseconds that we need to convert to seconds
+            	currTime = System.nanoTime();
+            	dt = (currTime - prevTime) / 1.0e9;
+            	prevTime = currTime;
+			//update the positions of all active objects
 			updatePositions(); 
-			//check for collisions b/w the objects
+			//check for collisions b/w all the active objects
 			checkCollisions(); 
-			//broadcast to all connected clients
+			//obtain a filled buffer
 			objectsToDraw = getObjectsToDraw();
 			//take elements from the buffer one by one and send them to the clients
-			//using currently active sessions passed by the server endpoint
-			//System.out.println(objectsToDraw.size());
+			//using currently active sessions accessed through the static SESSIONS set 
 			while(!(objectsToDraw.isEmpty())) {
+				//output the current buffer size to console
 				System.out.println("Sending object from buffer " + objectsToDraw.size()); 
+				//remove the object from the linked list buffer
 				ObjectToDraw bufferObject = objectsToDraw.remove(); 
+				//display the state of object before encoding takes place 
 				System.out.println(bufferObject.getType() + " " + 
-				bufferObject.getImageID() + " " + bufferObject.getObjectID() + " " + bufferObject.getObjectPosition());
+						           bufferObject.getImageID() + " " + 
+						           bufferObject.getObjectID() + " " + 
+						           bufferObject.getObjectPosition());
+				//broadcast a single object
 				sendObjectToAll(bufferObject);
-				
 			}
-
 				// if delta time is less than some target FPS (30 in this case)
 				// then sleep the current thread for remaining time this frame
-				if( dt < 1.0/60)
+				if(dt < 1.0/fps)
 					try	{
 						Thread.currentThread();
-						Thread.sleep((long)((1.0/60 - dt) * 1000));
+						Thread.sleep((long)((1.0/fps - dt) * 1000));
 					} catch (InterruptedException e) {}
-
 			//as the result each frame will take approximately the same time
 			//and the loop will iterate 60 times per second instead of 5000-10000
 		}
-		
 	}
 	/**
 	 * Updates the positions of all game objects by iterating through respective collections. 
 	 */
 	public synchronized void updatePositions() { 
 		//the for loops iterate through all enemy ships, updating their positions 
+		//and setting the internal update flag of each object to true
 		for(int i=0; i<formationRows; i++) {
 			for(int j=0; j<formationCols; j++) {
 				if(enemyFormation[i][j]!=null) {
@@ -158,26 +156,29 @@ public class GameLauncher {
 				}
 			}
 		}
-
 		//update the positions of all active bullets
-		if(!liveBullets.isEmpty()){
+		if(!liveBullets.isEmpty()) {
 			ListIterator <Bullet> iter = liveBullets.listIterator(); 
-			while(iter.hasNext()){
+			while(iter.hasNext()) {
 				Bullet bul = iter.next();
 				if((bul==null) || !bul.updatePosition())
 					iter.remove();
 			}
 		}
-
 		//update the positions of all players 
+		//code triggered by action events will go here 
 	}
-
+	/**
+	 * collision checking function of the game. obtains a Rectangle object using 
+	 * object dimensions from the array provided by the Image Processor. If the 
+	 * rectangles of two object intersect a hit is registered. 
+	 */
 	public synchronized void checkCollisions() {
-
-		//the two outside for loops iterate through all the enemyFormation on the screen
+		//the two outside for loops iterate through all enemies in the enemyFormation 2D array  
 		//for each enemy the inner while loops determines if a collision occurred b/w the enemy and the bullet
-		for(int i=0; i<formationRows; i++){
-			for(int j=0; j<formationCols; j++){
+		//if the collision occurred sets the enemy reference to null and removes the bullet from the array
+		for(int i=0; i<formationRows; i++) {
+			for(int j=0; j<formationCols; j++) {
 				if(enemyFormation[i][j]!=null){
 					ListIterator <Bullet> iter = liveBullets.listIterator(); 
 					//iterate through all active bullets
@@ -195,8 +196,7 @@ public class GameLauncher {
 				}
 			}
 		}
-
-		//check players for collisions 
+		//check players for collisions. if a hit occurred, remove both the player and the bullet from the game  
 		ListIterator <Bullet> iter = liveBullets.listIterator(); 
 		for(int i=0; i<numOfPlayers; i++) {
 			while(iter.hasNext()){
@@ -208,14 +208,20 @@ public class GameLauncher {
 			}
 		}
 	}
-
+	/**
+	 * the seeder method runs at the begining of the game. 
+	 * populates each cell the 2D array enemyFormation with 
+	 * enemies, giving each enemy a unique ID and choosing 
+	 * seeding starts from the seedOrigin point passed to the 
+	 * constructor of the GameLauncher class. 
+	 */
 	public synchronized void seedEnemies() {
 		//instantiate a 2D array with requested rows and columns 
 		enemyFormation= new EnemyShip[formationRows][formationCols];
 		//to hold random image index
 		int randImageID; 
 		//the loops populate the 2D array with enemy ships using random .png files from the enemySprites array
-		//each ship is given a starting coordinate 
+		//each ship is given a starting coordinate distinct from the predecessor 
 		for(int i=0; i<formationRows; i++) {
 			for(int j=0; j<formationCols; j++) {
 				randImageID = rand.nextInt(enemies.length);
@@ -229,15 +235,20 @@ public class GameLauncher {
 			seedOrigin.move(seedOrigin.x, seedOrigin.y+50);	
 		}
 	}
-
+	/*
+	 *	gathers all game objects whose coordinates have been updated into a linked list buffer 
+	 *	the buffer is later passed on to the sendToAll method for broadcasting. this avoids 
+	 *	sending objects whose states have not changed, reducing computations. each objects state
+	 *	is copied into a respective messenger object (objectToSend) 
+	 */
 	public synchronized LinkedList<ObjectToDraw> getObjectsToDraw() {
-
+		//create a buffer 
 		LinkedList<ObjectToDraw> objectsToDraw = new LinkedList<ObjectToDraw>();
 		//add enemies to buffer as encodable objects. send only those enemies whose fields have been updated. 
 		for(int i=0; i<formationRows; i++) {
 			for(int j=0; j<formationCols; j++) {
 				if(enemyFormation[i][j].isAlive && enemyFormation[i][j].isUpdated) {
-					System.out.println("Encoding enemy object");
+					System.out.println("Encoding enemy object whose coordinate is " + enemyFormation[i][j].objectPosition);
 					enemyFormation[i][j].setIsUpdated(false);
 					objectsToDraw.add(new ObjectToDraw(enemyFormation[i][j].toString(), 
 													   enemyFormation[i][j].imageID,
@@ -259,19 +270,15 @@ public class GameLauncher {
 			if(bullet.isAlive())
 				objectsToDraw.add(new ObjectToDraw(bullet.toString(), bullet.imageID, bullet.objectPosition, bullet.objectID)); 
 		}
-
+		//return the buffer to the caller
 		return objectsToDraw; 
 	}
-
+	/**
+	 * Takes a linked list buffer and broadcasts the objects to all connected peers. 
+	 * @param objectToDraw
+	 */
 	private synchronized void sendObjectToAll(ObjectToDraw objectToDraw) {
-//		try {
-//		session.getBasicRemote().sendObject(objectToDraw); 
-//		} catch (EncodeException e) {
-//			System.out.println("Encode Exception!");
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+		//goes through the SESSIONS set and sends a single object to each
 		for(Session s : ShooterServerEndpoint.SESSIONS) {
 			try {
 				s.getBasicRemote().sendObject(objectToDraw);

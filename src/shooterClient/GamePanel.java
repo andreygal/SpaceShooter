@@ -25,7 +25,7 @@ import messages.ObjectToDraw;
 import shooterServer.ImageProcessor;
 
 public class GamePanel extends JPanel implements KeyListener {
-        
+		private static final long serialVersionUID = 1L;
 		/**checks if one of the end game conditions has been met*/
         private boolean isRunning; 
         /**buffer for objects to be rendered*, object received first are guaranteed to be drawn first*/

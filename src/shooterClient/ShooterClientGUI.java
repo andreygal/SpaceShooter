@@ -69,7 +69,6 @@ public class ShooterClientGUI {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		
 	}
 	/**
 	 * This method passes an object representing a player,

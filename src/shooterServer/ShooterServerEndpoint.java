@@ -20,7 +20,6 @@ import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
 import messages.ObjectToDrawEncoder;
-import messages.ObjectToDraw;
 import messages.ObjectToDrawDecoder; 
 
 
