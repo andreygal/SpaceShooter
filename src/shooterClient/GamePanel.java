@@ -122,23 +122,20 @@ public class GamePanel extends JPanel implements KeyListener {
         public synchronized void receiveObjectToDraw(ObjectToDraw incomingObject) {
 
         	System.out.println("Panel is receiving an object");
-        	System.out.println(incomingObject.getObjectID());
-        	Integer id = incomingObject.getObjectID(); 
         	
-        	if (!IDset.contains(id)) {
+        	if (!IDset.contains(incomingObject.getObjectID())) {
         		//if the panel does not contain the object, add it
         		System.out.println("Adding object to panel storage");
         		System.out.println(incomingObject.getType() + " " +
                                                 incomingObject.getImageID() + " " + 
                                                 incomingObject.getObjectID() + " " +
                                                 incomingObject.getObjectPosition());
-        		//buffer.add(object); 
         		storage.add(incomingObject);
         		IDset.add(incomingObject.getObjectID());
         	} else if (!storage.isEmpty()) {
         		//find the object by ID and update it
         		for(ObjectToDraw storedObject : storage) {
-        			if(storedObject.equals(incomingObject));
+        			if(storedObject.equals(incomingObject))
         			storedObject.setObjectPosition(incomingObject.getObjectPosition());
         		}
         	}
@@ -201,9 +198,10 @@ public class GamePanel extends JPanel implements KeyListener {
         			imageID  = object.getImageID(); 
         			position = object.getObjectPosition(); 
 
-        			switch(type) {
+        			switch (type) {
 
         			case "shooterServer.PlayerShip":
+        				System.out.println(object.getObjectPosition() + " " + object.getType());
         				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
         				break;
 
