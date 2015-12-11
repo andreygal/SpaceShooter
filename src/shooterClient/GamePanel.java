@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements KeyListener {
         /**Stores objects passed by the server. Updates them on as needed basis*/ 
         ArrayList<ObjectToDraw> storage;
         /**A linked hash set to keep track of unique game elements. will not allow duplicates*/
-        LinkedList<Integer> IDset; 
+        LinkedHashSet<Integer> IDset; 
         
         //GamePanel constructor. SetFocusable has to be set to true for the panel to respond to player's input.
         public GamePanel (Session session) {
@@ -49,6 +49,7 @@ public class GamePanel extends JPanel implements KeyListener {
                 setFocusable(true);
                 buffer = new ConcurrentLinkedQueue<ObjectToDraw>(); 
                 storage = new ArrayList<ObjectToDraw>();
+                IDset = new LinkedHashSet<Integer>(); 
                 System.out.println("Panel Created");
         }
 
