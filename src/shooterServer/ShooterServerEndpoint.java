@@ -27,11 +27,13 @@ import messages.ObjectToDrawDecoder;
 @ServerEndpoint(value = "/shooter", decoders = { ObjectToDrawDecoder.class }, 
 									encoders = { ObjectToDrawEncoder.class })
 public class ShooterServerEndpoint {
-
+	/**the width of the gamePanel. must match the client*/
 	final static int WIDTH  = 500; 
+	/**the height of the gamePanel. must match the client*/
 	final static int HEIGHT = 500;
-	/**This set keeps track of currently connected sessions
-	 * By making the variable static made it available to the gameLauncher 
+	/**
+	 * This set keeps track of currently connected sessions
+	 * By making the variable static it was made available to the gameLauncher 
 	 */
 	static final Set<Session> SESSIONS = Collections.synchronizedSet(new HashSet<Session>());
 	/**The brains of the game*/
@@ -48,7 +50,6 @@ public class ShooterServerEndpoint {
 		logger.info("Server Connected ... " + session.getId());
 		System.out.println("Storing peer information");
 		SESSIONS.add(session); 
-
 	}
 	/**
 	 * This method is responsible for receiving action events from the 
@@ -60,7 +61,6 @@ public class ShooterServerEndpoint {
 	 */
 	@OnMessage
 	public void onMessage(String message, Session peer) {
-
 		System.out.println("Server's onMessage");
 
 		if(message.equals("start") && SESSIONS.size()==2) {
@@ -68,18 +68,11 @@ public class ShooterServerEndpoint {
 			//using the inner class below 
 			System.out.println("Server endpoint connected and listening");
 			new GameStarter(); 
-
 		}	
-
 	}
-	
-	/**
-	 * 
-	 */
+	/**Method not implemented. Project did not advance this far*/
 	@OnClose
-	public void onClose(){
-
-	}
+	public void onClose(){}
 	/**
 	 * This inner class is responsible 
 	 * for starting and maintaining the 
@@ -89,7 +82,7 @@ public class ShooterServerEndpoint {
 	class GameStarter implements Runnable {
 		// Create a second thread.
 		Thread t;
-
+		//construct a thread 
 		GameStarter() {
 			// Create a new, second thread
 			gameController = new GameLauncher(new Point(10,10), 1, 1, 1);	
@@ -100,7 +93,6 @@ public class ShooterServerEndpoint {
 		public void run() {
 			System.out.println("Starting the thread");
 			gameController.startGame();
-
 		}	
 	}
 }

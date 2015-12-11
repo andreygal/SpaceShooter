@@ -4,12 +4,10 @@ package shooterServer;
  * The workhorse class of the server side of the game.
  * It's responsible for creating and destroying game objects, 
  * adjusting object positions, and detecting collisions.
- * After all the objects have been update and check for collisions
- * it stores them in a buffer as a linked list. The terminator object
- * tells the program that no more objects need to be rendered per frame.
- * I was trying to work out a defect whereby a single object appears to be 
- * send multiple times, even though in line 98 of the game loop it is sent 
- * only once. 
+ * After all the objects have been updated and checked for collisions
+ * it stores them in a buffer as a linked list. At preset FPS intervals 
+ * the currently active objects are broadcasted to all connected peers.
+ *  
  */
 import java.awt.Dimension;
 import java.awt.Point;
@@ -33,7 +31,7 @@ public class GameLauncher {
 	/**A 2D array for holding references to enemy ships. can be used to seed different enemy formations. */
 	private EnemyShip[][] enemyFormation;
 	/**Starting point for calculating the initial positions all the enemies*/
-	Point seedOrigin; 
+	private Point seedOrigin; 
 	/**Number of rows in the enemy formation*/
 	private int formationRows; 
 	/**Number of columns in the enemy formation*/
