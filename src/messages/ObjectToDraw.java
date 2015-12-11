@@ -1,4 +1,18 @@
 package messages;
+/**
+ * @author Andrey Galper
+ * This class represents a watered down version of the original game object.
+ * It's use is to minimize the amount of data sent from the server to the clients.
+ * e.g. Images are not sent through the link
+ * The four elements the client needs in order to render the game are:
+ * 1. type (Enemy, player, bullet), 
+ * 2. imageID (an index of the array where the 
+ * 	  ImageProcessor keeps the respective image. 
+ * 3. obectID a number that uniquely identifies this object.
+ * 	  players have single digit IDs, enemies double digit and bullet triple digit.
+ * 4. objectPosition where the panel needs to draw this object
+ * respective 
+ */
 
 import java.awt.Point;
 
