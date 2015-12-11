@@ -11,6 +11,9 @@ package shooterServer;
  *for type, position and image to be used in rendering the object.  
  */
 import java.awt.Point;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.websocket.*; 
@@ -28,7 +31,7 @@ public class ShooterServerEndpoint {
 	final static int WIDTH  = 500; 
 	final static int HEIGHT = 500;
 	/**This set keeps track of currently connected sessions. Disabled for debugging.*/
-	//private static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
+	static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
 	Session s; 
 	GameLauncher gameController; 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -41,9 +44,9 @@ public class ShooterServerEndpoint {
 	 */
 	@OnOpen
 	public void onOpen(Session session) {
-		s = session; 
 		logger.info("Server Connected ... " + session.getId());
 		System.out.println("Server endpoint onOpen");
+		sessions.add(session); 
 
 	}
 	
@@ -60,7 +63,7 @@ public class ShooterServerEndpoint {
 
 		System.out.println("Server's onMessage");
 
-		if(message.equals("start")) {
+		if(message.equals("start") && sessions.size()==2) {
 			//if the signal from client is received, start a new thread
 			//using the inner class below 
 			System.out.println("Server endpoint connected and listening");

@@ -96,7 +96,7 @@ public class GameLauncher {
 	 *	I slowed down the loop after seeing that the same object was
 	 *	being send multiple times to the client side. Still working it out.
 	 */
-	public void startGame() {
+	public synchronized void startGame() {
 		System.out.println("gameLauncher is starting the game"); 
 		isActive = true; 
 		//calculate the time for each iteration of the loop using differences in system time. 
@@ -132,10 +132,10 @@ public class GameLauncher {
 
 				// if delta time is less than some target FPS (30 in this case)
 				// then sleep the current thread for remaining time this frame
-				if( dt < 1.0/10)
+				if( dt < 1.0/60)
 					try	{
 						Thread.currentThread();
-						Thread.sleep((long)((1.0/10 - dt) * 1000));
+						Thread.sleep((long)((1.0/60 - dt) * 1000));
 					} catch (InterruptedException e) {}
 
 			//as the result each frame will take approximately the same time
@@ -146,7 +146,7 @@ public class GameLauncher {
 	/**
 	 * Updates the positions of all game objects by iterating through respective collections. 
 	 */
-	public void updatePositions() { 
+	public synchronized void updatePositions() { 
 		//the for loops iterate through all enemy ships, updating their positions 
 		for(int i=0; i<formationRows; i++) {
 			for(int j=0; j<formationCols; j++) {
@@ -176,7 +176,7 @@ public class GameLauncher {
 		//update the positions of all players 
 	}
 
-	public void checkCollisions() {
+	public synchronized void checkCollisions() {
 
 		//the two outside for loops iterate through all the enemyFormation on the screen
 		//for each enemy the inner while loops determines if a collision occurred b/w the enemy and the bullet
@@ -213,7 +213,7 @@ public class GameLauncher {
 		}
 	}
 
-	public void seedEnemies() {
+	public synchronized void seedEnemies() {
 		//instantiate a 2D array with requested rows and columns 
 		enemyFormation= new EnemyShip[formationRows][formationCols];
 		//to hold random image index
@@ -234,7 +234,7 @@ public class GameLauncher {
 		}
 	}
 
-	public LinkedList<ObjectToDraw> getObjectsToDraw() {
+	public synchronized LinkedList<ObjectToDraw> getObjectsToDraw() {
 
 		LinkedList<ObjectToDraw> objectsToDraw = new LinkedList<ObjectToDraw>();
 		//add enemies to buffer as encodable objects. send only those enemies whose fields have been updated. 
@@ -267,23 +267,23 @@ public class GameLauncher {
 		return objectsToDraw; 
 	}
 
-	private void sendObjectToAll(ObjectToDraw objectToDraw) {
-		try {
-		session.getBasicRemote().sendObject(objectToDraw); 
-		} catch (EncodeException e) {
-			System.out.println("Encode Exception!");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-//		for(Session s : sessions) {
-//			try {
-//				s.getBasicRemote().sendObject(objectToDraw);
-//			} catch(EncodeException e) {
-//				System.out.println("Encode exception");
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
+	private synchronized void sendObjectToAll(ObjectToDraw objectToDraw) {
+//		try {
+//		session.getBasicRemote().sendObject(objectToDraw); 
+//		} catch (EncodeException e) {
+//			System.out.println("Encode Exception!");
+//		} catch (IOException e) {
+//			e.printStackTrace();
 //		}
 //	}
+		for(Session s : ShooterServerEndpoint.sessions) {
+			try {
+				s.getBasicRemote().sendObject(objectToDraw);
+			} catch(EncodeException e) {
+				System.out.println("Encode exception");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

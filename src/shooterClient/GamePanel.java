@@ -46,7 +46,7 @@ public class GamePanel extends JPanel implements KeyListener {
         		this.imageProcessor = new ImageProcessor(); 
                 isRunning = true;   //the game is running
                 setBackground(Color.BLACK);
-                setFocusable(true);
+                //setFocusable(true);
                 buffer = new ConcurrentLinkedQueue<ObjectToDraw>(); 
                 storage = new ArrayList<ObjectToDraw>();
                 IDset = new LinkedHashSet<Integer>(); 
@@ -60,55 +60,10 @@ public class GamePanel extends JPanel implements KeyListener {
     	 * Method renders one "frame" of the animation.
     	 */
         @Override
-        public void paintComponent(Graphics g) {
+        public synchronized void paintComponent(Graphics g) {
         	super.paintComponent(g);
         	System.out.println("Drawing objects using paintComp");
-        	//Stores the object passed by the receiveObjects method of this panel.
-        	//ObjectToDraw object;
-        	//Temporary storage for the ObjectToDraws data. 
-//        	String type; 
-//        	int imageID;
-//        	Point position; 
-        	/*
-        	 * If the game is running and there are left in the buffer to draw.
-        	 * paint objects, based on their type, particular sprite and position on
-        	 * the game board. The else clause is reserved for ending the game 
-        	 * and displaying the end game message. 
-        	 */
-//        	if(isRunning){
-//        		while(!buffer.isEmpty()){
-//        			//remove the object from the buffer 
-//        			object   = buffer.remove();	
-//        			type     = object.getType(); 
-//        			imageID  = object.getImageID(); 
-//        			position = object.getObjectPosition(); 
-//
-//        			switch(type) {
-//
-//        			case "shooterServer.PlayerShip":
-//        				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
-//        				break;
-//
-//        			case "shooterServer.EnemyShip": 
-//        				g.drawImage(ImageProcessor.EnemyShip[imageID], position.x, position.y, null);
-//        				break;
-//
-//        			case "shooterServer.Bullet":
-//        				g.drawImage(ImageProcessor.Bullet[imageID], position.x, position.y, null);
-//        				break;
-//        				
-//        			case "terminator":
-//        				continue;
-//
-//        			default:
-//        				System.out.println("Invalid image type");
-//        			}
-//        		} 
-//        	} else {
-//        			g.setColor(Color.BLUE);
-//        			g.setFont(new Font(null, Font.BOLD, 72));
-//        			g.drawString(message, 55, 200);
-//        	}
+  
         	
         	drawObjects(g);
         }
@@ -178,10 +133,10 @@ public class GamePanel extends JPanel implements KeyListener {
     			repaint(); 
     			// if delta time is less than some target FPS (30 in this case)
 				// then sleep the current thread for remaining time this frame
-				if( dt < 1.0/10)
+				if( dt < 1.0/60)
 					try	{
 						Thread.currentThread();
-						Thread.sleep((long)((1.0/10 - dt) * 1000));
+						Thread.sleep((long)((1.0/60 - dt) * 1000));
 					} catch (InterruptedException e) {}
     		}
     	}
@@ -216,12 +171,12 @@ public class GamePanel extends JPanel implements KeyListener {
         		}
         	}
     		
-    		try {
-				Thread.sleep(30);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//    		try {
+//				Thread.sleep(30);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
     	}
 
 }
