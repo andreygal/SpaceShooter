@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JPanel;
@@ -37,7 +38,7 @@ public class GamePanel extends JPanel implements KeyListener {
         /**Stores objects passed by the server. Updates them on as needed basis*/ 
         ArrayList<ObjectToDraw> storage;
         /**A linked hash set to keep track of unique game elements. will not allow duplicates*/
-        LinkedHashSet<Integer> IDset; 
+        LinkedList<Integer> IDset; 
         
         //GamePanel constructor. SetFocusable has to be set to true for the panel to respond to player's input.
         public GamePanel (Session session) {
@@ -117,30 +118,31 @@ public class GamePanel extends JPanel implements KeyListener {
          * of the ShooterClientGUI 
          * @param object is the a decoded message object 
          */
-    	public synchronized void receiveObjectToDraw(ObjectToDraw incomingObject) {
-    		System.out.println("Panel is receiving an object");
-    		
-    		if(incomingObject.getType().equals("terminator")){
-    			System.out.println("terminator received");
-    			repaint(); 
-    		} else if (!IDset.isEmpty() && !IDset.contains(incomingObject.getObjectID())) {
-    			//if the panel does not contain the object, add it
-    			System.out.println("Adding object to panel storage");
-    			System.out.println(incomingObject.getType() + " " +
-    						       incomingObject.getImageID() + " " + 
-    						       incomingObject.getObjectPosition());
-    			//buffer.add(object); 
-    			storage.add(incomingObject);
-    			IDset.add(incomingObject.getObjectID());
-    		} else {
-    			//find the object by ID and update it
-    			for(ObjectToDraw storedObject : storage) {
-    				if(storedObject.equals(incomingObject));
-    					storedObject.setObjectPosition(incomingObject.getObjectPosition());
-    			}
-    		}
-    	}
-    	
+        public synchronized void receiveObjectToDraw(ObjectToDraw incomingObject) {
+
+        	System.out.println("Panel is receiving an object");
+        	System.out.println(incomingObject.getObjectID());
+        	Integer id = incomingObject.getObjectID(); 
+        	
+        	if (!IDset.contains(id)) {
+        		//if the panel does not contain the object, add it
+        		System.out.println("Adding object to panel storage");
+        		System.out.println(incomingObject.getType() + " " +
+                                                incomingObject.getImageID() + " " + 
+                                                incomingObject.getObjectID() + " " +
+                                                incomingObject.getObjectPosition());
+        		//buffer.add(object); 
+        		storage.add(incomingObject);
+        		IDset.add(incomingObject.getObjectID());
+        	} else if (!storage.isEmpty()) {
+        		//find the object by ID and update it
+        		for(ObjectToDraw storedObject : storage) {
+        			if(storedObject.equals(incomingObject));
+        			storedObject.setObjectPosition(incomingObject.getObjectPosition());
+        		}
+        	}
+        }
+
     	/**
     	 * CHANGED
     	 * @param e accepts a KeyEvent coming from a left or right cursor arrows
@@ -168,6 +170,7 @@ public class GamePanel extends JPanel implements KeyListener {
     	public void drawAll() {
     		long currTime, prevTime = System.nanoTime();
     		double dt;
+    		
     		while(isRunning) {
     			//calculating delta time (time between frames)
 				//1.0e9 since nanoTime() returns nanoseconds that we need to convert to seconds
@@ -175,18 +178,21 @@ public class GamePanel extends JPanel implements KeyListener {
 				dt = (currTime - prevTime) / 1.0e9;
 				prevTime = currTime;
     			repaint(); 
-    			//calculating delta time (time between frames)
-				//1.0e9 since nanoTime() returns nanoseconds that we need to convert to seconds
-				currTime = System.nanoTime();
-				dt = (currTime - prevTime) / 1.0e9;
-				prevTime = currTime;
+    			// if delta time is less than some target FPS (30 in this case)
+				// then sleep the current thread for remaining time this frame
+				if( dt < 1.0/10)
+					try	{
+						Thread.currentThread();
+						Thread.sleep((long)((1.0/10 - dt) * 1000));
+					} catch (InterruptedException e) {}
     		}
     	}
     	
     	public synchronized void drawObjects(Graphics g) {
     		String type; 
-        	int imageID;
         	Point position; 	
+        	int imageID;
+
         	
     		if(!storage.isEmpty()) {
         		for(ObjectToDraw object : storage) {

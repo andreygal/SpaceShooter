@@ -18,7 +18,8 @@ public class ObjectToDrawDecoder implements Decoder.Text<ObjectToDraw> {
 		ObjectToDraw objectToDraw = new ObjectToDraw( jsonObject.getString("type"), 
                                   					  jsonObject.getInt("imageID"),
                                   					  jsonObject.getInt("xPosition"),
-                                  					  jsonObject.getInt("yPosition"));
+                                  					  jsonObject.getInt("yPosition"),
+                                  					  jsonObject.getInt("objectID"));
 								 
 		return objectToDraw; 
 	}

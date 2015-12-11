@@ -9,18 +9,24 @@ public class ObjectToDraw {
 		private int objectID; 
 		private Point objectPosition; 
 		
-		ObjectToDraw(String type, int imageID) {
+		ObjectToDraw(String type, int imageID, int objectID) {
 			this.type = type; 
 			this.imageID = imageID;
+			this.objectID = objectID; 
 		}
 
-		public ObjectToDraw(String type, int imageID, Point objectPosition){
-			this(type, imageID); 
+		public ObjectToDraw(String type, int imageID, Point objectPosition, int objectID){
+			this(type, imageID, objectID); 
 			this.objectPosition = objectPosition; 
 		}
 		//this. in used for clarity in this case
 		public ObjectToDraw(String type, int imageID, int x, int y) {
-			this(type, imageID);
+			this(type, imageID, -1);
+			this.objectPosition = new Point(x,y);
+		}
+		
+		public ObjectToDraw(String type, int imageID, int x, int y, int objectID) {
+			this(type, imageID, objectID);
 			this.objectPosition = new Point(x,y);
 		}
 

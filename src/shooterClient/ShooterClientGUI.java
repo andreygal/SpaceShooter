@@ -82,10 +82,12 @@ public class ShooterClientGUI {
 		
 		logger.info("Received ... " + object.toString());
 		//receive the object to be rendered and pass it to gamePanel
+		System.out.println(object.getType() + " " + 
+				object.getImageID() + " " + object.getObjectID() + " " + object.getObjectPosition());
 		gamePanel.receiveObjectToDraw(object);
 		//used to control the speed of rendering. may be rendered obsolete.
 //		try {
-//			Thread.sleep(30);
+//			Thread.sleep(100);
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}

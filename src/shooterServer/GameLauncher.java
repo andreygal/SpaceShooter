@@ -124,6 +124,8 @@ public class GameLauncher {
 			while(!(objectsToDraw.isEmpty())) {
 				System.out.println("Sending object from buffer " + objectsToDraw.size()); 
 				ObjectToDraw bufferObject = objectsToDraw.remove(); 
+				System.out.println(bufferObject.getType() + " " + 
+				bufferObject.getImageID() + " " + bufferObject.getObjectID() + " " + bufferObject.getObjectPosition());
 				sendObjectToAll(bufferObject);
 				
 			}
@@ -223,7 +225,7 @@ public class GameLauncher {
 				randImageID = rand.nextInt(enemies.length);
 				enemyFormation[i][j] = new EnemyShip(1, randImageID, enemies[randImageID], seedOrigin);
 				//stamp the object with a two digit ID
-				enemyFormation[i][j].setObjectID((i+10*j));
+				enemyFormation[i][j].setObjectID((i+10*(j+1)));
 				System.out.println(seedOrigin);
 				seedOrigin.move(seedOrigin.x+70, 0);
 			}
@@ -243,7 +245,8 @@ public class GameLauncher {
 					enemyFormation[i][j].setIsUpdated(false);
 					objectsToDraw.add(new ObjectToDraw(enemyFormation[i][j].toString(), 
 													   enemyFormation[i][j].imageID,
-													   enemyFormation[i][j].objectPosition));
+													   enemyFormation[i][j].objectPosition,
+													   enemyFormation[i][j].objectID));
 				}
 			}
 		}
@@ -252,18 +255,14 @@ public class GameLauncher {
 			if(ship.isAlive() && ship.isUpdated) {
 				System.out.println("Encoding player object");
 				ship.setIsUpdated(false);
-				objectsToDraw.add(new ObjectToDraw(ship.toString(), ship.imageID, ship.objectPosition));
+				objectsToDraw.add(new ObjectToDraw(ship.toString(), ship.imageID, ship.objectPosition, ship.objectID));
 			}
 		}
 		//add bullets to the buffer 
 		for(Bullet bullet:liveBullets) {
 			if(bullet.isAlive())
-				objectsToDraw.add(new ObjectToDraw(bullet.toString(), bullet.imageID, bullet.objectPosition)); 
+				objectsToDraw.add(new ObjectToDraw(bullet.toString(), bullet.imageID, bullet.objectPosition, bullet.objectID)); 
 		}
-
-//		//terminator object used to signal the end of the buffer
-//		System.out.println("Adding terminator");
-//		objectsToDraw.add(new ObjectToDraw("terminator", -1, 0, 0));
 
 		return objectsToDraw; 
 	}
