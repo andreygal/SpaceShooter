@@ -20,10 +20,10 @@ public final class PlayerShip extends Ship {
 	 * @param bulletVelocity is the velocity of the bullet fired by the ship object
 	 */
 	public PlayerShip(int xSpeed, int imageID, Dimension playerShipSize, int bulletVelocity,
-					  int bulletImageID, Dimension bulletSize) {
+					  int bulletImageID, Dimension bulletSize, int playerID) {
 		
 		super(xSpeed, imageID, playerShipSize);
-		
+		this.objectID = playerID; 
 		//the starting position of the player's ship, calculated to be the middle of the screen.
 		this.objectPosition = new Point(((ShooterServerEndpoint.WIDTH-this.getWidth())/2), (ShooterServerEndpoint.HEIGHT-this.getHeight()*2)); 	
 		//set the parameters of bullets fired by this ship 

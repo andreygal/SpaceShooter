@@ -13,6 +13,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JPanel;
@@ -32,7 +34,10 @@ public class GamePanel extends JPanel implements KeyListener {
         ImageProcessor imageProcessor; 
         /**Session object used to communicate with the server*/ 
         Session session; 
-       
+        /**Stores objects passed by the server. Updates them on as needed basis*/ 
+        ArrayList<ObjectToDraw> storage;
+        /**A linked hash set to keep track of unique game elements. will not allow duplicates*/
+        LinkedHashSet<Integer> IDset; 
         
         //GamePanel constructor. SetFocusable has to be set to true for the panel to respond to player's input.
         public GamePanel (Session session) {
@@ -42,8 +47,10 @@ public class GamePanel extends JPanel implements KeyListener {
                 setBackground(Color.BLACK);
                 setFocusable(true);
                 buffer = new ConcurrentLinkedQueue<ObjectToDraw>(); 
+                storage = new ArrayList<ObjectToDraw>();
                 System.out.println("Panel Created");
         }
+
       
         /**
     	 * CHANGED
@@ -55,51 +62,53 @@ public class GamePanel extends JPanel implements KeyListener {
         	super.paintComponent(g);
         	System.out.println("Drawing objects using paintComp");
         	//Stores the object passed by the receiveObjects method of this panel.
-        	ObjectToDraw object;
+        	//ObjectToDraw object;
         	//Temporary storage for the ObjectToDraws data. 
-        	String type; 
-        	int imageID;
-        	Point position; 
+//        	String type; 
+//        	int imageID;
+//        	Point position; 
         	/*
         	 * If the game is running and there are left in the buffer to draw.
         	 * paint objects, based on their type, particular sprite and position on
         	 * the game board. The else clause is reserved for ending the game 
         	 * and displaying the end game message. 
         	 */
-        	if(isRunning){
-        		while(!buffer.isEmpty()){
-        			//remove the object from the buffer 
-        			object   = buffer.remove();	
-        			type     = object.getType(); 
-        			imageID  = object.getImageID(); 
-        			position = object.getObjectPosition(); 
-
-        			switch(type) {
-
-        			case "shooterServer.PlayerShip":
-        				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
-        				break;
-
-        			case "shooterServer.EnemyShip": 
-        				g.drawImage(ImageProcessor.EnemyShip[imageID], position.x, position.y, null);
-        				break;
-
-        			case "shooterServer.Bullet":
-        				g.drawImage(ImageProcessor.Bullet[imageID], position.x, position.y, null);
-        				break;
-        				
-        			case "terminator":
-        				continue;
-
-        			default:
-        				System.out.println("Invalid image type");
-        			}
-        		} 
-        	} else {
-        			g.setColor(Color.BLUE);
-        			g.setFont(new Font(null, Font.BOLD, 72));
-        			g.drawString(message, 55, 200);
-        	}
+//        	if(isRunning){
+//        		while(!buffer.isEmpty()){
+//        			//remove the object from the buffer 
+//        			object   = buffer.remove();	
+//        			type     = object.getType(); 
+//        			imageID  = object.getImageID(); 
+//        			position = object.getObjectPosition(); 
+//
+//        			switch(type) {
+//
+//        			case "shooterServer.PlayerShip":
+//        				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
+//        				break;
+//
+//        			case "shooterServer.EnemyShip": 
+//        				g.drawImage(ImageProcessor.EnemyShip[imageID], position.x, position.y, null);
+//        				break;
+//
+//        			case "shooterServer.Bullet":
+//        				g.drawImage(ImageProcessor.Bullet[imageID], position.x, position.y, null);
+//        				break;
+//        				
+//        			case "terminator":
+//        				continue;
+//
+//        			default:
+//        				System.out.println("Invalid image type");
+//        			}
+//        		} 
+//        	} else {
+//        			g.setColor(Color.BLUE);
+//        			g.setFont(new Font(null, Font.BOLD, 72));
+//        			g.drawString(message, 55, 200);
+//        	}
+        	
+        	drawObjects(g);
         }
         
         /**
@@ -108,16 +117,28 @@ public class GamePanel extends JPanel implements KeyListener {
          * of the ShooterClientGUI 
          * @param object is the a decoded message object 
          */
-    	public void receiveObjectToDraw(ObjectToDraw object) {
+    	public synchronized void receiveObjectToDraw(ObjectToDraw incomingObject) {
     		System.out.println("Panel is receiving an object");
     		
-    		if(object.getType().equals("terminator")){
+    		if(incomingObject.getType().equals("terminator")){
     			System.out.println("terminator received");
     			repaint(); 
-    		} else
-    			System.out.println("Adding object to panel buffer");
-    			System.out.println(object.getType() + " " + object.getImageID() + " " + object.getObjectPosition());
-    			buffer.add(object); 
+    		} else if (!IDset.isEmpty() && !IDset.contains(incomingObject.getObjectID())) {
+    			//if the panel does not contain the object, add it
+    			System.out.println("Adding object to panel storage");
+    			System.out.println(incomingObject.getType() + " " +
+    						       incomingObject.getImageID() + " " + 
+    						       incomingObject.getObjectPosition());
+    			//buffer.add(object); 
+    			storage.add(incomingObject);
+    			IDset.add(incomingObject.getObjectID());
+    		} else {
+    			//find the object by ID and update it
+    			for(ObjectToDraw storedObject : storage) {
+    				if(storedObject.equals(incomingObject));
+    					storedObject.setObjectPosition(incomingObject.getObjectPosition());
+    			}
+    		}
     	}
     	
     	/**
@@ -145,7 +166,57 @@ public class GamePanel extends JPanel implements KeyListener {
     	public void keyTyped(KeyEvent e){}
 	
     	public void drawAll() {
+    		long currTime, prevTime = System.nanoTime();
+    		double dt;
+    		while(isRunning) {
+    			//calculating delta time (time between frames)
+				//1.0e9 since nanoTime() returns nanoseconds that we need to convert to seconds
+				currTime = System.nanoTime();
+				dt = (currTime - prevTime) / 1.0e9;
+				prevTime = currTime;
+    			repaint(); 
+    			//calculating delta time (time between frames)
+				//1.0e9 since nanoTime() returns nanoseconds that we need to convert to seconds
+				currTime = System.nanoTime();
+				dt = (currTime - prevTime) / 1.0e9;
+				prevTime = currTime;
+    		}
+    	}
+    	
+    	public synchronized void drawObjects(Graphics g) {
+    		String type; 
+        	int imageID;
+        	Point position; 	
+        	
+    		if(!storage.isEmpty()) {
+        		for(ObjectToDraw object : storage) {
+        			type     = object.getType(); 
+        			imageID  = object.getImageID(); 
+        			position = object.getObjectPosition(); 
+
+        			switch(type) {
+
+        			case "shooterServer.PlayerShip":
+        				g.drawImage(ImageProcessor.PlayerShip[imageID], position.x, position.y, null);
+        				break;
+
+        			case "shooterServer.EnemyShip": 
+        				g.drawImage(ImageProcessor.EnemyShip[imageID], position.x, position.y, null);
+        				break;
+
+        			case "shooterServer.Bullet":
+        				g.drawImage(ImageProcessor.Bullet[imageID], position.x, position.y, null);
+        				break;
+        			} 
+        		}
+        	}
     		
+    		try {
+				Thread.sleep(30);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	}
 
 }

@@ -18,6 +18,11 @@ public abstract class GameObject {
 	protected Dimension objectSize; 
 	/**the coordinates of the top left corner of the object*/
 	protected Point objectPosition;  
+	/**
+	 * an integer that uniquely identifies this object.
+	 * the client is responsible for ensuring that every ID is unique.
+	 */ 
+	protected int objectID; 
 	/**array index where the the object's image is stored*/
 	protected int imageID; 
 	/**is the object alive*/
@@ -43,9 +48,10 @@ public abstract class GameObject {
 		this.isUpdated = true; 
 	}
 
-	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition) {
+	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition, int objectID) {
 		this(); 
 		this.objectPosition = objectPosition; 
+		this.objectID = objectID; 
 	}
 
 	//getters and setters 
@@ -76,6 +82,14 @@ public abstract class GameObject {
 	
 	public boolean isAlive() {
 		return isAlive; 
+	}
+	
+	public void setIsUpdated(boolean isUpdated) {
+		this.isUpdated = isUpdated; 
+	}
+	
+	public void setObjectID(int objectID) {
+		this.objectID = objectID; 
 	}
 }
 

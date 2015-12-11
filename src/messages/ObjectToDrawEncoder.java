@@ -12,6 +12,7 @@ public class ObjectToDrawEncoder implements Encoder.Text<ObjectToDraw>{
 	public String encode (ObjectToDraw object) throws EncodeException{
 		JsonObject jsonObjectToDraw = Json.createObjectBuilder()
 				.add("type", 	  object.getType())
+				.add("objectID", object.getObjectID())
 				.add("imageID",   object.getImageID())
 				.add("xPosition", object.getObjectPosition().x) 
 				.add("yPosition", object.getObjectPosition().y).build(); 

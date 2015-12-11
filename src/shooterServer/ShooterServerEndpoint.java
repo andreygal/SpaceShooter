@@ -89,7 +89,7 @@ public class ShooterServerEndpoint {
 
 		GameStarter() {
 			// Create a new, second thread
-			gameController = new GameLauncher(s, new Point(10,10), 2, 2, 1);	
+			gameController = new GameLauncher(s, new Point(10,10), 1, 1, 1);	
 			t = new Thread(this, "Starter Thread");
 			t.start(); // Start the thread
 		}

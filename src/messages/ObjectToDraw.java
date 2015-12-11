@@ -6,6 +6,7 @@ public class ObjectToDraw {
 		
 		private String type; 
 		private int imageID; 
+		private int objectID; 
 		private Point objectPosition; 
 		
 		ObjectToDraw(String type, int imageID) {
@@ -45,5 +46,20 @@ public class ObjectToDraw {
 		
 		public void setObjectPosition(Point objectPosition) {
 			this.objectPosition = objectPosition; 
+		}
+		
+		public void setObjectID(int objectID) {
+			this.objectID = objectID; 
+		}
+		
+		public int getObjectID() {
+			return objectID; 
+		}
+		
+		public boolean equals (ObjectToDraw object) {
+			if(this.objectID==object.objectID)
+				return true; 
+			else
+				return false; 
 		}
 }

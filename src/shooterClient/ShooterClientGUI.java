@@ -84,11 +84,11 @@ public class ShooterClientGUI {
 		//receive the object to be rendered and pass it to gamePanel
 		gamePanel.receiveObjectToDraw(object);
 		//used to control the speed of rendering. may be rendered obsolete.
-		try {
-			Thread.sleep(30);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(30);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		
 	}
 	
@@ -114,6 +114,8 @@ public class ShooterClientGUI {
 				/*| InterruptedException*/ | IOException e) {
 			throw new RuntimeException(e);
 		}
+		
+		gamePanel.drawAll();
 	}
 	
 	/**

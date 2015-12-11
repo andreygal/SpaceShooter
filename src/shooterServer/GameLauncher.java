@@ -64,7 +64,7 @@ public class GameLauncher {
 	/**If the game is over, set to false*/
 	private boolean isActive;  
 	/**
-	 * Contructor sets up that initializes the actual "game" 
+	 * Contructor sets up and initializes the actual "game" 
 	 * @param session Holds a single session. Will be replaced by a collection of sessions for multiplayer.
 	 * @param seedOrigin Where to start seeding the enemies 
 	 * @param formationRows How many rows of enemies
@@ -72,7 +72,7 @@ public class GameLauncher {
 	 * @param numOfPlayers  The number of connected players. 
 	 */
 	GameLauncher(Session session, Point seedOrigin, int formationRows, int formationCols, int numOfPlayers) {
-		//this.sessions = sessions; for multiplayer. still debugging usingn single player mode. 
+		//this.sessions = sessions; for multiplayer. still debugging using single player mode. 
 		this.session = session; 
 		this.seedOrigin = seedOrigin; 
 		this.formationRows = formationRows; 
@@ -87,7 +87,7 @@ public class GameLauncher {
 		livePlayers = new ArrayList<PlayerShip>();  
 		liveBullets = new ArrayList<Bullet>(); 
 		//add a test player
-		livePlayers.add(new PlayerShip(5, 0, players[0], 5, 0, bullets[0]));
+		livePlayers.add(new PlayerShip(5, 0, players[0], 5, 0, bullets[0], 0));
 		System.out.println("Launcher Created");
 	}
 	/**
@@ -113,25 +113,27 @@ public class GameLauncher {
 				dt = (currTime - prevTime) / 1.0e9;
 				prevTime = currTime;
 			//update the positions of all the objects
-			//updatePositions(); 
+			updatePositions(); 
 			//check for collisions b/w the objects
 			checkCollisions(); 
 			//broadcast to all connected clients
 			objectsToDraw = getObjectsToDraw();
 			//take elements from the buffer one by one and send them to the clients
 			//using currently active sessions passed by the server endpoint
-			System.out.println(objectsToDraw.size());
+			//System.out.println(objectsToDraw.size());
 			while(!(objectsToDraw.isEmpty())) {
+				System.out.println("Sending object from buffer " + objectsToDraw.size()); 
 				ObjectToDraw bufferObject = objectsToDraw.remove(); 
 				sendObjectToAll(bufferObject);
+				
 			}
 
 				// if delta time is less than some target FPS (30 in this case)
 				// then sleep the current thread for remaining time this frame
-				if( dt < 1.0/30)
+				if( dt < 1.0/10)
 					try	{
 						Thread.currentThread();
-						Thread.sleep((long)((1.0/60 - dt) * 1000));
+						Thread.sleep((long)((1.0/10 - dt) * 1000));
 					} catch (InterruptedException e) {}
 
 			//as the result each frame will take approximately the same time
@@ -147,10 +149,14 @@ public class GameLauncher {
 		for(int i=0; i<formationRows; i++) {
 			for(int j=0; j<formationCols; j++) {
 				if(enemyFormation[i][j]!=null) {
-					if(i%2==0)
+					if(i%2==0) {
 						enemyFormation[i][j].moveLeft();
-					else if(i%2==1)
+						enemyFormation[i][j].setIsUpdated(true);
+					}
+					else if(i%2==1) {
 						enemyFormation[i][j].moveRight();
+						enemyFormation[i][j].setIsUpdated(true); 
+					}
 				}
 			}
 		}
@@ -216,6 +222,8 @@ public class GameLauncher {
 			for(int j=0; j<formationCols; j++) {
 				randImageID = rand.nextInt(enemies.length);
 				enemyFormation[i][j] = new EnemyShip(1, randImageID, enemies[randImageID], seedOrigin);
+				//stamp the object with a two digit ID
+				enemyFormation[i][j].setObjectID((i+10*j));
 				System.out.println(seedOrigin);
 				seedOrigin.move(seedOrigin.x+70, 0);
 			}
@@ -232,6 +240,7 @@ public class GameLauncher {
 			for(int j=0; j<formationCols; j++) {
 				if(enemyFormation[i][j].isAlive && enemyFormation[i][j].isUpdated) {
 					System.out.println("Encoding enemy object");
+					enemyFormation[i][j].setIsUpdated(false);
 					objectsToDraw.add(new ObjectToDraw(enemyFormation[i][j].toString(), 
 													   enemyFormation[i][j].imageID,
 													   enemyFormation[i][j].objectPosition));
@@ -240,9 +249,9 @@ public class GameLauncher {
 		}
 		//add players to the buffer 
 		for(PlayerShip ship:livePlayers) {
-			if(ship.isAlive()){
+			if(ship.isAlive() && ship.isUpdated) {
 				System.out.println("Encoding player object");
-
+				ship.setIsUpdated(false);
 				objectsToDraw.add(new ObjectToDraw(ship.toString(), ship.imageID, ship.objectPosition));
 			}
 		}
@@ -252,9 +261,9 @@ public class GameLauncher {
 				objectsToDraw.add(new ObjectToDraw(bullet.toString(), bullet.imageID, bullet.objectPosition)); 
 		}
 
-		//terminator object used to signal the end of the buffer
-		System.out.println("Adding terminator");
-		objectsToDraw.add(new ObjectToDraw("terminator", -1, 0, 0));
+//		//terminator object used to signal the end of the buffer
+//		System.out.println("Adding terminator");
+//		objectsToDraw.add(new ObjectToDraw("terminator", -1, 0, 0));
 
 		return objectsToDraw; 
 	}
