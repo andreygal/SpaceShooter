@@ -3,7 +3,7 @@ package shooterServer;
 import java.awt.Dimension;
 import java.awt.Point;
 /**
- * Represents the keyboard controlled player's ship.
+ * Represents a keyboard controlled player's ship.
  * 
  * @author Andrey Galper 
  *
@@ -13,7 +13,8 @@ public final class PlayerShip extends Ship {
 	private int bulletImageID; 
 	private Dimension bulletSize; 
 	/**
-	 * 	
+	 * @param playerID is the ObjectID of the player	
+	 * @param playerShipSize contains the height and width of the ship 
 	 * @param xSpeed is the player's horizontal velocity
 	 * @param path is the directory path to the ship's image file
 	 * @param botInset is the width of the bottom border of a panel

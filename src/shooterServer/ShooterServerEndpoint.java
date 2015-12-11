@@ -30,31 +30,31 @@ public class ShooterServerEndpoint {
 
 	final static int WIDTH  = 500; 
 	final static int HEIGHT = 500;
-	/**This set keeps track of currently connected sessions. Disabled for debugging.*/
-	static final Set<Session> sessions = Collections.synchronizedSet(new HashSet<Session>());
-	Session s; 
+	/**This set keeps track of currently connected sessions
+	 * By making the variable static made it available to the gameLauncher 
+	 */
+	static final Set<Session> SESSIONS = Collections.synchronizedSet(new HashSet<Session>());
+	/**The brains of the game*/
 	GameLauncher gameController; 
+	/**to keep a communication log*/
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	/**
-	 * When the connection with the client is established, this method 
-	 * should technically instantiate the gameController object and start
-	 * the thread responsible for the game. It failed to this task, so I 
-	 * had to move the logic to the onMessage method. 
-	 * @param session the currently active session. 
+	 * When the connection with a peer is established,
+	 * it is stored in the SESSIONS set. 
+	 * @param session the session currently connecting. 
 	 */
 	@OnOpen
 	public void onOpen(Session session) {
 		logger.info("Server Connected ... " + session.getId());
-		System.out.println("Server endpoint onOpen");
-		sessions.add(session); 
+		System.out.println("Storing peer information");
+		SESSIONS.add(session); 
 
 	}
-	
 	/**
 	 * This method is responsible for receiving action events from the 
 	 * clients and passing them to the gameController object. Still working
-	 * on the implementation. For now, it starts the game when it receives the 
-	 * "start" signal from the client side.  
+	 * on the implementation. For now, it starts the game when it receives  
+	 * a start request from two clients.
 	 * @param message the message coming from the client.
 	 * @param peer currently connected peer.
 	 */
@@ -63,7 +63,7 @@ public class ShooterServerEndpoint {
 
 		System.out.println("Server's onMessage");
 
-		if(message.equals("start") && sessions.size()==2) {
+		if(message.equals("start") && SESSIONS.size()==2) {
 			//if the signal from client is received, start a new thread
 			//using the inner class below 
 			System.out.println("Server endpoint connected and listening");
@@ -92,7 +92,7 @@ public class ShooterServerEndpoint {
 
 		GameStarter() {
 			// Create a new, second thread
-			gameController = new GameLauncher(s, new Point(10,10), 1, 1, 1);	
+			gameController = new GameLauncher(new Point(10,10), 1, 1, 1);	
 			t = new Thread(this, "Starter Thread");
 			t.start(); // Start the thread
 		}

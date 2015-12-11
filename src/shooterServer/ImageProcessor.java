@@ -46,9 +46,10 @@ public class ImageProcessor {
 	 */
 	public static Image[] getResizedImages(File imageDir) {
 		// resize images and store them in respective arrays
-		File[] imageList = imageDir.listFiles();
+		File[]  imageList = imageDir.listFiles();
 		Image[] images = new Image[imageList.length];
-		int numOfSprites = imageList.length;
+		int     numOfSprites = imageList.length;
+		
 		System.out.println(numOfSprites);
 
 		if (numOfSprites != 0) {
@@ -68,7 +69,7 @@ public class ImageProcessor {
 				System.out.println(imageList[i]);
 			}
 		}
-
+		
 		return images;
 	}
 	/**
@@ -84,6 +85,7 @@ public class ImageProcessor {
 		for(int i=0; i<resizedImages.length; i++){
 			dimensions[i] = new Dimension(resizedImages[i].getWidth(null), resizedImages[i].getHeight(null));
 		}
+		
 		return dimensions; 
 	}
 

@@ -1,5 +1,8 @@
 package messages;
-
+/**
+ * @author Andrey Galper
+ * An json encoder for the object to draw.
+ */
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.websocket.EncodeException;

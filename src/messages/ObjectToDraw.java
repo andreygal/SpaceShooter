@@ -75,7 +75,7 @@ public class ObjectToDraw {
 		public int getObjectID() {
 			return objectID; 
 		}
-		
+		//objects are equal only if their ID numbers match 
 		public boolean equals (ObjectToDraw object) {
 			if(this.objectID==object.objectID)
 				return true; 

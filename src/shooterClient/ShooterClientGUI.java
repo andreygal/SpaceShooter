@@ -61,7 +61,7 @@ public class ShooterClientGUI {
 		//validate the connection and output to console 
 		logger.info("Connected ... " + session.getId());
 		System.out.println("in onOpen");
-
+		//send a message to the server signaling the client is ready to start the game
 		try {
 			createAndShowGUI(session);
 			session.getBasicRemote().sendText("start");
@@ -85,12 +85,6 @@ public class ShooterClientGUI {
 		System.out.println(object.getType() + " " + 
 				object.getImageID() + " " + object.getObjectID() + " " + object.getObjectPosition());
 		gamePanel.receiveObjectToDraw(object);
-		//used to control the speed of rendering. may be rendered obsolete.
-//		try {
-//			Thread.sleep(100);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
 		
 	}
 	
@@ -105,7 +99,7 @@ public class ShooterClientGUI {
 				session.getId(), closeReason));
 	}
 	
-	
+	//connect to the client and start rendering continuously 
 	public static void main(String[] args) {
 		//establishes a connection with the game server.
 		ClientManager client = ClientManager.createClient();
@@ -116,7 +110,7 @@ public class ShooterClientGUI {
 				/*| InterruptedException*/ | IOException e) {
 			throw new RuntimeException(e);
 		}
-		
+		//starts the persistent rendering methdod
 		gamePanel.drawAll();
 	}
 	
@@ -132,6 +126,7 @@ public class ShooterClientGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         // bare bones: just add a panel where the game objects are drawn
+        // and pass it a connection to the server
         gamePanel = new GamePanel(session);
         frame.add(gamePanel, BorderLayout.CENTER);
         frame.setSize(WIDTH, HEIGHT);

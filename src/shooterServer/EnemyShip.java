@@ -3,7 +3,7 @@ package shooterServer;
 import java.awt.Dimension;
 import java.awt.Point;
 /**
- * Represents the computer controlled enemy ship.
+ * Represents a computer controlled enemy ship.
  * 
  * @author Andrey Galper 
  *
@@ -23,7 +23,4 @@ public final class EnemyShip extends Ship {
 		return bullet; 
 	}
 	
-	void updatePosition(){
-		objectPosition.translate(xSpeed, 0);
-	}
 }

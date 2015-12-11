@@ -71,9 +71,7 @@ public class GameLauncher {
 	 * @param formationCols How many columns of enemies
 	 * @param numOfPlayers  The number of connected players. 
 	 */
-	GameLauncher(Session session, Point seedOrigin, int formationRows, int formationCols, int numOfPlayers) {
-		//this.sessions = sessions; for multiplayer. still debugging using single player mode. 
-		this.session = session; 
+	GameLauncher(Point seedOrigin, int formationRows, int formationCols, int numOfPlayers) {
 		this.seedOrigin = seedOrigin; 
 		this.formationRows = formationRows; 
 		this.formationCols = formationCols; 
@@ -276,7 +274,7 @@ public class GameLauncher {
 //			e.printStackTrace();
 //		}
 //	}
-		for(Session s : ShooterServerEndpoint.sessions) {
+		for(Session s : ShooterServerEndpoint.SESSIONS) {
 			try {
 				s.getBasicRemote().sendObject(objectToDraw);
 			} catch(EncodeException e) {

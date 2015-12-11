@@ -1,4 +1,8 @@
 package messages;
+/**
+ * @author Andrey Galper
+ * A json to object decoder for the objectToDraw.
+ */
 
 import java.io.StringReader;
 

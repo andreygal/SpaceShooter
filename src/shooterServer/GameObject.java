@@ -35,9 +35,9 @@ public abstract class GameObject {
 	/**
 	 * @param xSpeed is the x velocity of an object
 	 * @param ySpeed is the y velocity of an object
-	 * @param path is the path to the image used to represent a game object
-	 * constructs a game object by resizing the image, setting the velocities and 
-	 * calculating all the derived attributes like Dimension, Position etc.
+	 * @param imageID is the objects image index 
+	 * @param objectSize contains the width and height
+	 * constructs a generic game object  
 	 */
 	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize) {
 		this.objectSize = objectSize; 
@@ -45,7 +45,7 @@ public abstract class GameObject {
 		this.ySpeed = ySpeed; 
 		this.imageID = imageID;  
 		this.isAlive = true; 
-		this.isUpdated = true; 
+		this.isUpdated = true; //object was just created so it is updated 
 	}
 
 	public GameObject(int xSpeed, int ySpeed, int imageID, Dimension objectSize, Point objectPosition, int objectID) {
@@ -74,7 +74,10 @@ public abstract class GameObject {
 	public Rectangle getRectangle(){
 		return new Rectangle(objectPosition.x, objectPosition.y, objectSize.width, objectSize.height);
 	}
-	
+	/**
+	 * will return a class name prefixed by the name of the package where the class is kept
+	 * @return return package.className
+	 */
 	@Override
 	public final String toString() {
 		return this.getClass().getName(); 
