@@ -89,7 +89,7 @@ public class GameLauncher {
 	 *	I slowed down the loop after seeing that the same object was
 	 *	being send multiple times to the client side. Still working it out.
 	 */
-	public synchronized void startGame() {
+	public void startGame() {
 		System.out.println("gameLauncher is starting the game"); 
 		isActive = true; 
 		//calculate the time for each iteration of the loop using differences in system time. 
@@ -216,6 +216,8 @@ public class GameLauncher {
 	 * constructor of the GameLauncher class. 
 	 */
 	public synchronized void seedEnemies() {
+		System.out.println("seeding enemies " + formationRows + " " + formationCols);
+		
 		//instantiate a 2D array with requested rows and columns 
 		enemyFormation= new EnemyShip[formationRows][formationCols];
 		//to hold random image index
@@ -225,14 +227,16 @@ public class GameLauncher {
 		for(int i=0; i<formationRows; i++) {
 			for(int j=0; j<formationCols; j++) {
 				randImageID = rand.nextInt(enemies.length);
+				System.out.println("Seed origin is now " + seedOrigin);
 				enemyFormation[i][j] = new EnemyShip(1, randImageID, enemies[randImageID], seedOrigin);
 				//stamp the object with a two digit ID
 				enemyFormation[i][j].setObjectID((i+10*(j+1)));
 				System.out.println(seedOrigin);
-				seedOrigin.move(seedOrigin.x+70, 0);
+				seedOrigin.translate(70, 0);
+				System.out.println("After inner loop seedOrigin is " + seedOrigin);
 			}
 			//start the next row from the original x coordinate
-			seedOrigin.move(seedOrigin.x, seedOrigin.y+50);	
+			seedOrigin.translate(0, 50);	
 		}
 	}
 	/*
